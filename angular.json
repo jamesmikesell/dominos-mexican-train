@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "dominoes"
+    }
+  },
+  "defaultProject": "dominoes",
+  "cli": {
+    "analytics": "8e71bfe6-84f9-404a-8602-153f91cc97ae"
+  }
 }
