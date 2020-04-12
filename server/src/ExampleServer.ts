@@ -3,7 +3,7 @@ import * as controllers from './controllers';
 import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 
-class ExampleServer extends Server {
+export class ExampleServer extends Server {
 
     private readonly SERVER_STARTED = 'Example server started on port: ';
 
@@ -35,4 +35,3 @@ class ExampleServer extends Server {
     }
 }
 
-export default ExampleServer;
