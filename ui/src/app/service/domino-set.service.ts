@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Domino } from '../model/domino';
+import { Domino } from '../../../../common/src/model/domino';
 
 @Injectable({
   providedIn: 'root'

@@ -14,4 +14,5 @@ export class Domino {
   get double(): boolean {
     return this.sideA === this.sideB;
   }
+
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DominoSetService } from '../../service/domino-set.service';
-import { Domino } from '../../model/domino';
+import { Domino } from '../../../../../common/src/model/domino';
 
 @Component({
   selector: 'app-main',

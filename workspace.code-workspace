@@ -9,6 +9,10 @@
 			"path": "server"
 		},
 		{
+			"name": "common",
+			"path": "common"
+		},
+		{
 			"name": "ui",
 			"path": "ui"
 		}
@@ -18,6 +22,7 @@
 			"**/.git": true,
 			"**/.DS_Store": true,
 			"ui": true,
+			"common": true,
 			"server": true
 		}
 	}

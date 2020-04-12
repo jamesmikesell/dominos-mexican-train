@@ -20,6 +20,11 @@
       "dom"
     ]
   },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
