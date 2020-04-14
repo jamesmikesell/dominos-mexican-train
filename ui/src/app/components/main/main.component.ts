@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { DominoSetService } from '../../service/domino-set.service';
+import { plainToClass } from 'class-transformer';
 import { Domino } from '../../../../../common/src/model/domino';
+import { TableAndHand } from '../../../../../common/src/model/game-table';
 
 @Component({
   selector: 'app-main',
@@ -11,22 +13,19 @@ export class MainComponent implements OnInit {
 
   boneYard = new Set<Domino>();
   hand = new Set<Domino>();
-  train: Domino[] = [];
 
-  constructor(private setUtil: DominoSetService) { }
+
+  constructor(
+    private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.boneYard = this.setUtil.generateSet(9);
+    this.http.get<TableAndHand>("/api/getTable")
+      .toPromise()
+      .then(table => {
+        table = plainToClass(TableAndHand, table);
 
-    let double = this.setUtil.popDoubleFromSet(9, this.boneYard);
-    this.train.push(double);
-
-
-    this.setUtil.addRandomToHand(3, this.hand, this.boneYard);
-
-    console.log(this.train);
-    console.log(Array.from(this.hand));
-    console.log(Array.from(this.boneYard));
+        console.log(table);
+      });
   }
 
 }

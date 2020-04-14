@@ -1,21 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-
-import { DominoSetService } from './domino-set.service';
+import { SetUtils } from '../../../../common/src/util/domino-set-utils';
 
 describe('DominoSetService', () => {
-  let service: DominoSetService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DominoSetService);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
   });
 
   it('domino set correct', () => {
-    let set = service.generateSet(2);
+    let set = SetUtils.generateSet(2);
     let keySet = new Set<string>();
     set.forEach(domino => keySet.add(domino.key));
 
