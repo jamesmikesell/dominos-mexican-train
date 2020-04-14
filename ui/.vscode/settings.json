@@ -1,7 +1,10 @@
 {
-    "search.exclude": {
-        "target": true,
-        "node_modules": true,
-        "target_intellij": true
-    }
+  "search.exclude": {
+    "target": true,
+    "node_modules": true,
+    "target_intellij": true
+  },
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false
 }
