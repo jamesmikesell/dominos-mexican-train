@@ -1,5 +1,5 @@
-import { ExampleServer } from "./ExampleServer";
+import { DominoServer } from "./server";
 import "reflect-metadata";
 
-const exampleServer = new ExampleServer();
-exampleServer.start(3000);
+const dominoServer = new DominoServer();
+dominoServer.start(3000);

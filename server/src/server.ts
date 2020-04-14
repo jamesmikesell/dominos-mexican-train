@@ -4,7 +4,7 @@ import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 import cookieParser from 'cookie-parser';
 
-export class ExampleServer extends Server {
+export class DominoServer extends Server {
 
     private readonly SERVER_STARTED = 'Example server started on port: ';
 
