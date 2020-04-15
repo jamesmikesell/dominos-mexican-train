@@ -14,6 +14,7 @@ export class GameTable {
 
 
 export class Train {
+  @Type(() => GameTable)
   dominoes: Domino[] = [];
   isPublic = false;
 
