@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { plainToClass } from 'class-transformer';
-import { Domino } from '../../../../../common/src/model/domino';
-import { TableAndHand } from '../../../../../common/src/model/game-table';
+import { Domino } from '@common/model/domino';
+import { TableAndHand } from '@common/model/game-table';
+import { CommonTransformer } from '@common/util/conversion-utils';
 
 @Component({
   selector: 'app-main',
@@ -20,12 +20,9 @@ export class MainComponent implements OnInit {
     this.http.get<TableAndHand>("/api/getTable")
       .toPromise()
       .then(wrapper => {
-        wrapper = plainToClass(TableAndHand, wrapper);
+        wrapper = CommonTransformer.plainToClassSingle(TableAndHand, wrapper);
 
         this.hand = Array.from(wrapper.hand);
-        console.log(this.hand);
-        console.log(plainToClass(TableAndHand, wrapper));
-        console.log(wrapper);
       });
   }
 

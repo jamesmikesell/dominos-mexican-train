@@ -1,9 +1,9 @@
 import { Controller, Get } from '@overnightjs/core';
-import { classToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
 import { Domino } from '../../../common/src/model/domino';
-import { GameTable, TableAndHand } from "../../../common/src/model/game-table";
-import { SetUtils } from "../../../common/src/util/domino-set-utils";
+import { GameTable, TableAndHand } from '../../../common/src/model/game-table';
+import { SetUtils } from '../../../common/src/util/domino-set-utils';
+import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 
 
 @Controller('api')
@@ -43,7 +43,7 @@ export class GameController {
     tableAndHand.hand = hand;
     tableAndHand.table = this.table;
 
-    res.status(200).json(classToPlain(tableAndHand));
+    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
 }

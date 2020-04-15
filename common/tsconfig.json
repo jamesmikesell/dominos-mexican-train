@@ -9,15 +9,14 @@
     "esModuleInterop": true, /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
     "baseUrl": "./",
     "outDir": "build",
-    "removeComments": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "composite": true,
-    "types": [
-      "node"
-    ],
+    "composite": true, 
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": ".",
     "typeRoots": [
       "node_modules/@types"
     ]
