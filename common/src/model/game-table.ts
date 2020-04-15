@@ -6,7 +6,7 @@ export class GameTable {
   boneYard = new Set<Domino>();
   @Type(() => Train)
   playerTrains = new Map<string, Train>();
-  @Type(() => Domino)
+  @Type(() => Train)
   mexicanTrain: Train;
   @Type(() => Domino)
   startingDouble: Domino;
@@ -14,7 +14,7 @@ export class GameTable {
 
 
 export class Train {
-  @Type(() => GameTable)
+  @Type(() => Domino)
   dominoes: Domino[] = [];
   isPublic = false;
 
