@@ -11,9 +11,7 @@ import { TableAndHand } from '../../../../../common/src/model/game-table';
 })
 export class MainComponent implements OnInit {
 
-  boneYard = new Set<Domino>();
-  hand = new Set<Domino>();
-
+  hand: Domino[];
 
   constructor(
     private http: HttpClient) { }
@@ -21,10 +19,13 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.http.get<TableAndHand>("/api/getTable")
       .toPromise()
-      .then(table => {
-        table = plainToClass(TableAndHand, table);
+      .then(wrapper => {
+        wrapper = plainToClass(TableAndHand, wrapper);
 
-        console.log(table);
+        this.hand = Array.from(wrapper.hand);
+        console.log(this.hand);
+        console.log(plainToClass(TableAndHand, wrapper));
+        console.log(wrapper);
       });
   }
 

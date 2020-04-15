@@ -1,10 +1,9 @@
-import { Controller, Get, Post } from '@overnightjs/core';
-import { Logger } from '@overnightjs/logger';
-import { plainToClass, classToPlain } from 'class-transformer';
+import { Controller, Get } from '@overnightjs/core';
+import { classToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
+import { Domino } from '../../../common/src/model/domino';
 import { GameTable, TableAndHand } from "../../../common/src/model/game-table";
 import { SetUtils } from "../../../common/src/util/domino-set-utils";
-import { Domino } from '../../../common/src/model/domino';
 
 
 @Controller('api')
