@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Domino } from '@common/model/domino';
-import { TableAndHand } from '@common/model/game-table';
+import { TableAndHand, Train } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
+import { CookieService } from '../../cookie.service';
 
 @Component({
   selector: 'app-main',
@@ -12,8 +13,13 @@ import { CommonTransformer } from '@common/util/conversion-utils';
 export class MainComponent implements OnInit {
 
   hand: UIDomino[] = [];
+  trains = new Map<string, Train>();
+  mexicanTrain: Train;
+  placePiece = false;
+  playerId: string;
 
   constructor(
+    private cookieService: CookieService,
     private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -21,6 +27,12 @@ export class MainComponent implements OnInit {
       .toPromise()
       .then(wrapper => {
         wrapper = CommonTransformer.plainToClassSingle(TableAndHand, wrapper);
+
+        this.trains = wrapper.table.playerTrains;
+        this.mexicanTrain = wrapper.table.mexicanTrain;
+
+        this.playerId = this.cookieService.getCookie("playerId");
+        console.log(wrapper.table.playerTrains);
 
         // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
         this.syncHand(wrapper.hand);
@@ -52,8 +64,13 @@ export class MainComponent implements OnInit {
       (domino.dragEnd && (Date.now() - domino.dragEnd.getTime()) < 500))
       return;
 
-    domino.flip();
-    console.log("click");
+    if (this.placePiece) {
+      let train = this.trains.get(this.playerId);
+      train.addDomino(domino);
+    } else {
+      domino.flip();
+      console.log("click");
+    }
   }
 
   dragStart(domino: UIDomino): void {

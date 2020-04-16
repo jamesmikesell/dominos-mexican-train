@@ -1,3 +1,6 @@
+
+<mat-checkbox [(ngModel)]="placePiece">Place Piece</mat-checkbox>
+
 <div class="example-boundary">
   <div *ngFor="let domino of hand" class="example-box" (click)="changeOrientation(domino)"
     [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"

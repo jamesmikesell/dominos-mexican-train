@@ -1,8 +1,8 @@
 import { Domino } from './domino';
-import { Type } from 'class-transformer';
+import { Type, Exclude } from 'class-transformer';
 
 export class GameTable {
-  @Type(() => Domino)
+  @Exclude()
   boneYard = new Set<Domino>();
   @Type(() => Train)
   playerTrains = new Map<string, Train>();
@@ -10,6 +10,11 @@ export class GameTable {
   mexicanTrain: Train;
   @Type(() => Domino)
   startingDouble: Domino;
+
+  constructor(startingDouble: Domino) {
+    this.startingDouble = startingDouble;
+    this.playerTrains = new Map();
+  }
 }
 
 
