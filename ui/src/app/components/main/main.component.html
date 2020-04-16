@@ -1,6 +1,7 @@
 <div class="example-boundary">
-  <div *ngFor="let domino of hand" class="example-box" [class.domino-regular]="!domino.isDouble"
-    [class.domino-double]="domino.isDouble" cdkDragBoundary=".example-boundary" cdkDrag>
+  <div *ngFor="let domino of hand" class="example-box" (click)="changeOrientation(domino)"
+    [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"
+    cdkDragBoundary=".example-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
     {{domino.left}} - {{domino.right}}
   </div>
 </div>

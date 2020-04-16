@@ -23,10 +23,14 @@ export class Domino {
       throw new Error("Cannot orient domino to supplied value");
 
     if (this._right === precedingDominosRight) {
-      let oldLeft = this._left;
-      this._left = this._right
-      this._right = oldLeft;
+      this.flip();
     }
+  }
+
+  flip(): void {
+    let oldLeft = this._left;
+    this._left = this._right
+    this._right = oldLeft;
   }
 
 }
