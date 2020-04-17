@@ -16,6 +16,7 @@ export class MainComponent implements OnInit {
   trains: Train[];
   trainToPlay: Train;
   playerId: string;
+  playerHandCounts: Map<string, number>;
 
   constructor(
     private cookieService: CookieService,
@@ -34,6 +35,7 @@ export class MainComponent implements OnInit {
 
     this.trains = tableAndHand.table.trains;
     this.playerId = this.cookieService.getCookie("playerId");
+    this.playerHandCounts = tableAndHand.dominosInPlayerHands;
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);

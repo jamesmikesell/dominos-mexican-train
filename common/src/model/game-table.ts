@@ -1,5 +1,5 @@
 import { Domino } from './domino';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class GameTable {
   @Type(() => Train)
@@ -43,6 +43,13 @@ export class TableAndHand {
   table: GameTable;
   @Type(() => Domino)
   hand: Set<Domino>;
+  @Transform(value => {
+    let map = new Map<string, number>();
+    for (let entry of Object.entries<number>(value))
+      map.set(entry[0], entry[1]);
+    return map;
+  }, { toClassOnly: true })
+  dominosInPlayerHands = new Map<string, number>();
 }
 
 export class Move {

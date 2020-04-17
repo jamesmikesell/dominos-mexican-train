@@ -12,6 +12,7 @@ export class GameController {
   private table: GameTable;
   private hands = new Map<string, Set<Domino>>();
   private boneYard: Set<Domino>;
+  private readonly mexicanTrainId = "Viva Mexico";
 
 
   private startingDouble = 9;
@@ -24,7 +25,7 @@ export class GameController {
   private initGame(): void {
     this.boneYard = SetUtils.generateSet(this.setSize);
     this.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, this.boneYard));
-    let mexicanTrain = new Train(this.table.startingDouble, "Viva Mexico");
+    let mexicanTrain = new Train(this.table.startingDouble, this.mexicanTrainId);
     mexicanTrain.isPublic = true;
     this.table.trains.push(mexicanTrain);
 
@@ -67,8 +68,12 @@ export class GameController {
       console.log("domino doesn't exist in player hand");
     }
 
+    // setting manually as playing the piece will have altered hand count
+    this.setDominoCountsOnHands(tableAndHand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
+
+
 
   private getPlayerId(req: Request, res: Response): string {
     let playerId = req.cookies.playerId;
@@ -96,9 +101,18 @@ export class GameController {
     let tableAndHand = new TableAndHand();
     tableAndHand.hand = hand;
     tableAndHand.table = this.table;
+    this.setDominoCountsOnHands(tableAndHand);
+
     return tableAndHand;
   }
 
+  private setDominoCountsOnHands(tableAndHand: TableAndHand): void {
+    this.hands.forEach((dominos, handPlayerId) => {
+      if (handPlayerId !== this.mexicanTrainId) {
+        tableAndHand.dominosInPlayerHands.set(handPlayerId, dominos.size);
+      }
+    })
+  }
 
 
 }

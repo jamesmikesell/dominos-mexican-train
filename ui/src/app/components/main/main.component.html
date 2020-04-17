@@ -3,7 +3,13 @@
     <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
       [color]="!trainToPlay ? 'primary' : 'warn'">
       {{train.playerId}}
+      <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
+        <ng-container *ngTemplateOutlet="handCount"></ng-container>
+      </ng-container>
     </button>
+    <ng-template #handCount>
+      ({{playerHandCounts.get(train.playerId)}})
+    </ng-template>
 
     {{train.startingDouble.left}}|{{train.startingDouble.right}}
     <span *ngFor="let domino of train.dominoes">
