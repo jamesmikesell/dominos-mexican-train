@@ -42,6 +42,34 @@ export class GameController {
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
+  @Post('playPiece')
+  public playPiece(req: Request, res: Response): void {
+    let playerId = this.getPlayerId(req, res);
+    let hand = this.getOrCreatePlayerHand(playerId);
+
+    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+
+    let move = CommonTransformer.plainToClassSingle(Move, req.body);
+    let domino = Array.from(hand).find(singleDomino => singleDomino.key === move.domino.key);
+    if (domino) {
+      try {
+        let train = tableAndHand.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
+        if (train.playerId === playerId || train.isPublic) {
+          train.addDomino(domino);
+          hand.delete(domino)
+        } else {
+          console.log("Train isn't players nor public");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("domino doesn't exist in player hand");
+    }
+
+    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
+  }
+
   private getPlayerId(req: Request, res: Response): string {
     let playerId = req.cookies.playerId;
     if (!playerId) {
@@ -71,32 +99,6 @@ export class GameController {
     return tableAndHand;
   }
 
-  @Post('playPiece')
-  public playPiece(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
-    let hand = this.getOrCreatePlayerHand(playerId);
 
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
-
-    let move = CommonTransformer.plainToClassSingle(Move, req.body);
-    let domino = Array.from(hand).find(singleDomino => singleDomino.key === move.domino.key);
-    if (domino) {
-      try {
-        let train = tableAndHand.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
-        if (train.playerId === playerId || train.isPublic) {
-          train.addDomino(domino);
-          hand.delete(domino)
-        } else {
-          console.log("Train isn't players nor public");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      console.log("domino doesn't exist in player hand");
-    }
-
-    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
-  }
 
 }
