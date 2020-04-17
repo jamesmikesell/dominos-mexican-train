@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Domino } from '@common/model/domino';
-import { TableAndHand, Train } from '@common/model/game-table';
+import { TableAndHand, Train, Move } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../cookie.service';
 
@@ -13,9 +13,8 @@ import { CookieService } from '../../cookie.service';
 export class MainComponent implements OnInit {
 
   hand: UIDomino[] = [];
-  trains = new Map<string, Train>();
-  mexicanTrain: Train;
-  placePiece = false;
+  trains: Train[];
+  trainToPlay: Train;
   playerId: string;
 
   constructor(
@@ -25,18 +24,19 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.http.get<TableAndHand>("/api/getTable")
       .toPromise()
-      .then(wrapper => {
-        wrapper = CommonTransformer.plainToClassSingle(TableAndHand, wrapper);
-
-        this.trains = wrapper.table.playerTrains;
-        this.mexicanTrain = wrapper.table.mexicanTrain;
-
-        this.playerId = this.cookieService.getCookie("playerId");
-        console.log(wrapper.table.playerTrains);
-
-        // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
-        this.syncHand(wrapper.hand);
+      .then(tableAndHand => {
+        this.setStateFromServer(tableAndHand);
       });
+  }
+
+  private setStateFromServer(plainTableAndHand: TableAndHand): void {
+    let tableAndHand = CommonTransformer.plainToClassSingle(TableAndHand, plainTableAndHand);
+
+    this.trains = tableAndHand.table.trains;
+    this.playerId = this.cookieService.getCookie("playerId");
+
+    // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
+    this.syncHand(tableAndHand.hand);
   }
 
   private syncHand(handOfTruth: Set<Domino>): void {
@@ -64,13 +64,35 @@ export class MainComponent implements OnInit {
       (domino.dragEnd && (Date.now() - domino.dragEnd.getTime()) < 500))
       return;
 
-    if (this.placePiece) {
-      let train = this.trains.get(this.playerId);
-      train.addDomino(domino);
+    if (this.trainToPlay) {
+      this.playPiece(domino);
     } else {
       domino.flip();
       console.log("click");
     }
+  }
+
+  trainCanBePlayed(train: Train): boolean {
+    return (!this.trainToPlay || this.trainToPlay.playerId === train.playerId)
+      && (train.isPublic || train.playerId === this.playerId)
+  }
+
+  toggleTrainToPlay(train: Train): void {
+    if (this.trainToPlay)
+      this.trainToPlay = undefined;
+    else
+      this.trainToPlay = train;
+  }
+
+  private playPiece(domino: Domino): void {
+    let move = new Move();
+    move.domino = domino;
+    move.train = this.trainToPlay;
+    this.http.post<TableAndHand>("/api/playPiece", CommonTransformer.classToPlainSingle(move))
+      .toPromise()
+      .then(tableAndHand => {
+        this.setStateFromServer(tableAndHand);
+      });
   }
 
   dragStart(domino: UIDomino): void {

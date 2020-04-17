@@ -1,19 +1,14 @@
 import { Domino } from './domino';
-import { Type, Exclude } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 export class GameTable {
-  @Exclude()
-  boneYard = new Set<Domino>();
   @Type(() => Train)
-  playerTrains = new Map<string, Train>();
-  @Type(() => Train)
-  mexicanTrain: Train;
+  trains: Train[] = [];
   @Type(() => Domino)
   startingDouble: Domino;
 
   constructor(startingDouble: Domino) {
     this.startingDouble = startingDouble;
-    this.playerTrains = new Map();
   }
 }
 
@@ -22,11 +17,13 @@ export class Train {
   @Type(() => Domino)
   dominoes: Domino[] = [];
   isPublic = false;
+  playerId: string;
   @Type(() => Domino)
   public startingDouble: Domino
 
-  constructor(startingDouble: Domino) {
+  constructor(startingDouble: Domino, playerId: string) {
     this.startingDouble = startingDouble;
+    this.playerId = playerId;
   }
 
   addDomino(domino: Domino): void {
@@ -46,4 +43,11 @@ export class TableAndHand {
   table: GameTable;
   @Type(() => Domino)
   hand: Set<Domino>;
+}
+
+export class Move {
+  @Type(() => Domino)
+  domino: Domino;
+  @Type(() => Train)
+  train: Train;
 }
