@@ -24,6 +24,9 @@
 			"ui": true,
 			"common": true,
 			"server": true
-		}
+		},
+		"cSpell.words": [
+			"unvalidated"
+		]
 	}
 }
