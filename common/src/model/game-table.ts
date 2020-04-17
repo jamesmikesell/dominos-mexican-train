@@ -22,8 +22,12 @@ export class Train {
   @Type(() => Domino)
   dominoes: Domino[] = [];
   isPublic = false;
+  @Type(() => Domino)
+  public startingDouble: Domino
 
-  constructor(public startingDouble: Domino) { }
+  constructor(startingDouble: Domino) {
+    this.startingDouble = startingDouble;
+  }
 
   addDomino(domino: Domino): void {
     let prevDomino: Domino;
