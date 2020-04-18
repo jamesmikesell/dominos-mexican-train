@@ -6,9 +6,11 @@ export class GameTable {
   trains: Train[] = [];
   @Type(() => Domino)
   startingDouble: Domino;
+  gameId: number;
 
   constructor(startingDouble: Domino) {
     this.startingDouble = startingDouble;
+    this.gameId = Date.now();
   }
 }
 

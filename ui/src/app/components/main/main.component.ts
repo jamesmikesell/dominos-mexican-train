@@ -21,6 +21,7 @@ export class MainComponent implements OnInit {
   playerHandCounts: Map<string, number>;
   lastUpdate: number;
   dominosInBoneyard = 0;
+  gameId: number;
 
   constructor(
     private cookieService: CookieService,
@@ -95,6 +96,12 @@ export class MainComponent implements OnInit {
     this.lastUpdate = tableAndHand.lastUpdate;
     this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
     this.sortTrains(this.trains);
+    if (this.gameId !== tableAndHand.table.gameId) {
+      this.gameId = tableAndHand.table.gameId;
+      // clear out any (visible and hidden) dominos on game change, so that new dominos don't start drawing off the screen
+      // because they ran out of space
+      this.hand.length = 0;
+    }
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);

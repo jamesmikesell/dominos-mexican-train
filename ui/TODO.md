@@ -2,7 +2,6 @@
 # TODO 
 * control who is next (handle dropped players)
 * scrolling of trains
-* clear all (hidden) dominos in player's hand upon new game so domino's don't draw off screen
 * log of move history
 * Rollback state
 * styling of dominos
@@ -13,3 +12,4 @@
 * Make Train public
 * show dominos left in bone yard
 * Make it more apparent which train is yours
+* clear all (hidden) dominos in player's hand upon new game so domino's don't draw off screen
