@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Domino } from '@common/model/domino';
 import { TableAndHand, Train, Move } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
-import { CookieService } from '../../cookie.service';
+import { CookieService } from '../../service/cookie.service';
 
 @Component({
   selector: 'app-main',
