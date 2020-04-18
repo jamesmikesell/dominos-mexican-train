@@ -1,32 +1,24 @@
 <div>
   Boneyard ({{dominosInBoneyard}})
 </div>
+<div *ngIf="trains && trains.length">
+  Starting Domino: {{trains[0].startingDouble.left}}
+</div>
 
 <div class="trains">
-  <div *ngFor="let train of trains">
+  <ng-container *ngFor="let train of trains">
     <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
       [color]="getTrainColor(train)">
       {{train.playerId}}
       <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
-        <ng-container *ngTemplateOutlet="handCount"></ng-container>
+        ({{playerHandCounts.get(train.playerId)}})
       </ng-container>
     </button>
-    <ng-template #handCount>
-      ({{playerHandCounts.get(train.playerId)}})
-    </ng-template>
 
-    {{train.startingDouble.left}}|{{train.startingDouble.right}}
-    <span *ngFor="let domino of train.dominoes">
-      {{domino.left}}|{{domino.right}}
-    </span>
-  </div>
-</div>
-
-<div class="controls">
-  <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
-    Draw Domino
-  </button>
-  <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
+    <div class="trains-dominos">
+      <app-train [train]="train"></app-train>
+    </div>
+  </ng-container>
 </div>
 
 <div class="hand-boundary">
@@ -35,4 +27,12 @@
     cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
     {{domino.left}} - {{domino.right}}
   </div>
+</div>
+
+
+<div class="controls">
+  <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
+    Draw Domino
+  </button>
+  <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
 </div>

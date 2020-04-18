@@ -60,3 +60,13 @@
 .trains>* {
   margin-top: 10px;
 }
+
+.trains {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+
+.trains-dominos {
+  margin-top: 17px !important;
+}

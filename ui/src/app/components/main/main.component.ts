@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Domino } from '@common/model/domino';
-import { TableAndHand, Train, Move } from '@common/model/game-table';
+import { Move, TableAndHand, Train } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../service/cookie.service';
-import { Router } from '@angular/router';
 import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
 
 @Component({
