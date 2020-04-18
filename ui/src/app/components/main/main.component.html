@@ -18,6 +18,10 @@
   </div>
 </div>
 
+<button (click)="drawDomino()" mat-raised-button type="button" color="warn">
+  Draw Domino
+</button>
+
 <div class="example-boundary">
   <div *ngFor="let domino of hand" class="example-box" (click)="changeOrientation(domino)"
     [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"

@@ -42,6 +42,17 @@ export class GameController {
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
+  @Post('drawDomino')
+  public drawDomino(req: Request, res: Response): void {
+    let playerId = this.getPlayerId(req, res);
+    let hand = this.getOrCreatePlayerHand(playerId);
+
+    SetUtils.addRandomToHand(1, hand, this.boneYard);
+
+    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
+  }
+
   @Post('playPiece')
   public playPiece(req: Request, res: Response): void {
     let playerId = this.getPlayerId(req, res);

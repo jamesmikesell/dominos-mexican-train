@@ -13,12 +13,16 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { NameComponent } from './components/name/name.component';
 import { InitComponent } from './components/init/init.component';
+import { DialogAreYouSureComponent } from './components/dialog-are-you-sure/dialog-are-you-sure.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
     AppComponent,
     NameComponent,
     InitComponent,
+    DialogAreYouSureComponent,
     MainComponent
   ],
   imports: [
@@ -28,6 +32,8 @@ import { InitComponent } from './components/init/init.component';
     FormsModule,
     MatInputModule,
     MatButtonModule,
+    MatBottomSheetModule,
+    MatListModule,
     MatCheckboxModule,
     HttpClientModule,
     BrowserAnimationsModule

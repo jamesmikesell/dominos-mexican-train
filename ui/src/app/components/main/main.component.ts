@@ -5,6 +5,7 @@ import { TableAndHand, Train, Move } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../service/cookie.service';
 import { Router } from '@angular/router';
+import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
 
 @Component({
   selector: 'app-main',
@@ -22,6 +23,7 @@ export class MainComponent implements OnInit {
   constructor(
     private cookieService: CookieService,
     private router: Router,
+    private yesNoLauncher: LauncherAreYouSure,
     private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -112,6 +114,19 @@ export class MainComponent implements OnInit {
     domino.dragEnd = new Date();
     domino.dragging = false;
   }
+
+  drawDomino(): void {
+    this.yesNoLauncher.launch().then(result => {
+      if (result) {
+        this.http.post<TableAndHand>("/api/drawDomino", {})
+          .toPromise()
+          .then(tableAndHand => {
+            this.setStateFromServer(tableAndHand);
+          });
+      }
+    });
+  }
+
 
 }
 
