@@ -7,6 +7,13 @@ export class CookieService {
 
   constructor() { }
 
+  getPlayerId(): string {
+    if (!this.getCookie("playerId"))
+      return undefined;
+
+    return atob(unescape(this.getCookie("playerId")));
+  }
+
   getCookie(name: string): string {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;
@@ -20,5 +27,9 @@ export class CookieService {
       }
     }
     return undefined;
+  }
+
+  setPlayerId(playerId: string): void {
+    document.cookie = `playerId=${escape(btoa(playerId))}`
   }
 }

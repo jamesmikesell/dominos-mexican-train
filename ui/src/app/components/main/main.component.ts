@@ -34,7 +34,7 @@ export class MainComponent implements OnInit {
     let tableAndHand = CommonTransformer.plainToClassSingle(TableAndHand, plainTableAndHand);
 
     this.trains = tableAndHand.table.trains;
-    this.playerId = this.cookieService.getCookie("playerId");
+    this.playerId = this.cookieService.getPlayerId();
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand

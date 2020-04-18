@@ -5,7 +5,6 @@ import { GameTable, TableAndHand, Train, Move } from '../../../common/src/model/
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 
-
 @Controller('api')
 export class GameController {
 
@@ -78,10 +77,11 @@ export class GameController {
   private getPlayerId(req: Request, res: Response): string {
     let playerId = req.cookies.playerId;
     if (!playerId) {
-      playerId = Math.random();
+      playerId = Buffer.from(Math.random().toString()).toString('base64');
       res.cookie("playerId", playerId);
     }
-    return playerId;
+
+    return Buffer.from(playerId, 'base64').toString();
   }
 
   private getOrCreatePlayerHand(playerId: string): Set<Domino> {

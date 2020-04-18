@@ -11,10 +11,12 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { NameComponent } from './components/name/name.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    NameComponent,
     MainComponent
   ],
   imports: [
