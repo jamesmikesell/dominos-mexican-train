@@ -18,9 +18,12 @@
   </div>
 </div>
 
-<button (click)="drawDomino()" mat-raised-button type="button" color="warn">
-  Draw Domino
-</button>
+<div class="controls">
+  <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
+    Draw Domino
+  </button>
+  <mat-checkbox [(ngModel)]="trainIsPublic">Train Public</mat-checkbox>
+</div>
 
 <div class="example-boundary">
   <div *ngFor="let domino of hand" class="example-box" (click)="changeOrientation(domino)"

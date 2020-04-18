@@ -46,3 +46,11 @@
 .hidden {
   visibility: hidden;
 }
+
+.controls {
+  margin-left: -10px;
+}
+
+.controls>* {
+  margin-left: 10px;
+}

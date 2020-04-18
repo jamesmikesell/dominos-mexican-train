@@ -90,6 +90,20 @@ export class GameController {
   }
 
 
+  @Post('setTrainStatus')
+  public setTrainStatus(req: Request, res: Response): void {
+    let playerId = this.getPlayerId(req, res);
+    let isPublic = CommonTransformer.plainToClassSingle(Train, req.body).isPublic;
+    let localTrain = this.table.trains.find(train => train.playerId === playerId);
+    localTrain.isPublic = isPublic;
+
+    let hand = this.getOrCreatePlayerHand(playerId);
+    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+
+    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
+  }
+
+
 
   private getPlayerId(req: Request, res: Response): string {
     let playerId = req.cookies.playerId;

@@ -57,6 +57,33 @@ export class MainComponent implements OnInit {
       });
   }
 
+  set trainIsPublic(val: boolean) {
+    let myTrain = this.getMyTrain();
+    if (!myTrain)
+      return;
+
+    myTrain.isPublic = val;
+    this.http.post<TableAndHand>("/api/setTrainStatus", CommonTransformer.classToPlainSingle(myTrain))
+      .toPromise()
+      .then(tableAndHand => {
+        this.setStateFromServer(tableAndHand);
+      });
+  }
+
+  get trainIsPublic(): boolean {
+    let myTrain = this.getMyTrain();
+    if (!myTrain)
+      return false;
+
+    return myTrain.isPublic
+  }
+
+  private getMyTrain(): Train {
+    if (!this.trains)
+      return undefined;
+
+    return this.trains.find(train => train.playerId === this.playerId);
+  }
 
   private setStateFromServer(plainTableAndHand: TableAndHand): void {
     let tableAndHand = CommonTransformer.plainToClassSingle(TableAndHand, plainTableAndHand);
