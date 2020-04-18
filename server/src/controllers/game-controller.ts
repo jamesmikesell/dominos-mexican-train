@@ -10,10 +10,9 @@ export class GameController {
 
   private table: GameTable;
   private hands = new Map<string, Set<Domino>>();
-  private boneYard: Set<Domino>;
+  private boneyard: Set<Domino>;
   private readonly mexicanTrainId = "Viva Mexico";
   private lastUpdate: number;
-
   private startingDouble = 9;
   private setSize = 9;
 
@@ -22,8 +21,8 @@ export class GameController {
   }
 
   private initGame(): void {
-    this.boneYard = SetUtils.generateSet(this.setSize);
-    this.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, this.boneYard));
+    this.boneyard = SetUtils.generateSet(this.setSize);
+    this.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, this.boneyard));
     let mexicanTrain = new Train(this.table.startingDouble, this.mexicanTrainId);
     mexicanTrain.isPublic = true;
     this.table.trains.push(mexicanTrain);
@@ -48,7 +47,7 @@ export class GameController {
     let playerId = this.getPlayerId(req, res);
     let hand = this.getOrCreatePlayerHand(playerId);
 
-    SetUtils.addRandomToHand(1, hand, this.boneYard);
+    SetUtils.addRandomToHand(1, hand, this.boneyard);
 
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
@@ -59,13 +58,12 @@ export class GameController {
     let playerId = this.getPlayerId(req, res);
     let hand = this.getOrCreatePlayerHand(playerId);
 
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
 
     let move = CommonTransformer.plainToClassSingle(Move, req.body);
     let domino = Array.from(hand).find(singleDomino => singleDomino.key === move.domino.key);
     if (domino) {
       try {
-        let train = tableAndHand.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
+        let train = this.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
         if (train.playerId === playerId || train.isPublic) {
           train.addDomino(domino);
           hand.delete(domino)
@@ -79,8 +77,7 @@ export class GameController {
       console.log("domino doesn't exist in player hand");
     }
 
-    // setting manually as playing the piece will have altered hand count
-    this.setDominoCountsOnHands(tableAndHand);
+    let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
@@ -119,7 +116,7 @@ export class GameController {
     let hand = this.hands.get(playerId);
     if (!hand) {
       hand = new Set();
-      SetUtils.addRandomToHand(8, hand, this.boneYard);
+      SetUtils.addRandomToHand(8, hand, this.boneyard);
       this.hands.set(playerId, hand);
     }
     return hand;
@@ -135,6 +132,7 @@ export class GameController {
     this.lastUpdate = Date.now();
     tableAndHand.lastUpdate = this.lastUpdate;
     this.setDominoCountsOnHands(tableAndHand);
+    tableAndHand.dominosInBoneyard = this.boneyard.size;
 
     return tableAndHand;
   }

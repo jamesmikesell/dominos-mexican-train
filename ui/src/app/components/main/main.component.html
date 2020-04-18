@@ -1,4 +1,8 @@
 <div>
+  Boneyard ({{dominosInBoneyard}})
+</div>
+
+<div class="trains">
   <div *ngFor="let train of trains">
     <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
       [color]="!trainToPlay ? 'primary' : 'warn'">

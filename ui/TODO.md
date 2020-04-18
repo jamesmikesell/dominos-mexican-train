@@ -1,7 +1,7 @@
 
 # TODO 
+* Make it more apparent which train is yours
 * control who is next (handle dropped players)
-* show dominos left in bone yard
 * scrolling of trains
 * clear all (hidden) dominos in player's hand upon new game so domino's don't draw off screen
 * log of move history
@@ -12,3 +12,4 @@
 
 # To Done
 * Make Train public
+* show dominos left in bone yard

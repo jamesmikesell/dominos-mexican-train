@@ -20,6 +20,7 @@ export class MainComponent implements OnInit {
   playerId: string;
   playerHandCounts: Map<string, number>;
   lastUpdate: number;
+  dominosInBoneyard = 0;
 
   constructor(
     private cookieService: CookieService,
@@ -92,6 +93,7 @@ export class MainComponent implements OnInit {
     this.playerId = this.cookieService.getPlayerId();
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
     this.lastUpdate = tableAndHand.lastUpdate;
+    this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);
