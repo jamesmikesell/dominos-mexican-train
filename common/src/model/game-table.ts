@@ -14,6 +14,8 @@ export class GameTable {
 
 
 export class Train {
+  static readonly MEXICAN_TRAIN_ID = "Viva Mexico";
+
   @Type(() => Domino)
   dominoes: Domino[] = [];
   isPublic = false;

@@ -34,6 +34,7 @@ export class MainComponent implements OnInit {
       return;
     }
 
+    this.playerId = this.cookieService.getPlayerId();
     this.checkFoUpdate();
   }
 
@@ -90,13 +91,29 @@ export class MainComponent implements OnInit {
     let tableAndHand = CommonTransformer.plainToClassSingle(TableAndHand, plainTableAndHand);
 
     this.trains = tableAndHand.table.trains;
-    this.playerId = this.cookieService.getPlayerId();
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
     this.lastUpdate = tableAndHand.lastUpdate;
     this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
+    this.sortTrains(this.trains);
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);
+  }
+
+  private sortTrains(trains: Train[]): void {
+    trains.sort((a, b) => {
+      let aIsMexican = a.playerId === Train.MEXICAN_TRAIN_ID ? 1 : 0;
+      let bIsMexican = b.playerId === Train.MEXICAN_TRAIN_ID ? 1 : 0;
+      if (aIsMexican !== bIsMexican)
+        return bIsMexican - aIsMexican;
+
+      let aIsMine = a.playerId === this.playerId ? 1 : 0;
+      let bIsMine = b.playerId === this.playerId ? 1 : 0;
+      if (aIsMine !== bIsMine)
+        return aIsMine - bIsMine;
+
+      return a.playerId.localeCompare(b.playerId);
+    });
   }
 
   private syncHand(handOfTruth: Set<Domino>): void {
@@ -117,6 +134,14 @@ export class MainComponent implements OnInit {
       if (!serverHand.has(localDomino.key))
         localDomino.hidden = true;
     })
+  }
+
+  getTrainColor(train: Train): string {
+    if (this.trainToPlay) {
+      return "warn";
+    } else {
+      return "primary";
+    }
   }
 
   changeOrientation(domino: UIDomino): void {

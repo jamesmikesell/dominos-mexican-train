@@ -5,7 +5,7 @@
 <div class="trains">
   <div *ngFor="let train of trains">
     <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
-      [color]="!trainToPlay ? 'primary' : 'warn'">
+      [color]="getTrainColor(train)">
       {{train.playerId}}
       <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
         <ng-container *ngTemplateOutlet="handCount"></ng-container>
@@ -26,7 +26,7 @@
   <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
     Draw Domino
   </button>
-  <mat-checkbox [(ngModel)]="trainIsPublic">Train Public</mat-checkbox>
+  <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
 </div>
 
 <div class="example-boundary">

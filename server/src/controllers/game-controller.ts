@@ -11,7 +11,6 @@ export class GameController {
   private table: GameTable;
   private hands = new Map<string, Set<Domino>>();
   private boneyard: Set<Domino>;
-  private readonly mexicanTrainId = "Viva Mexico";
   private lastUpdate: number;
   private startingDouble = 9;
   private setSize = 9;
@@ -23,7 +22,7 @@ export class GameController {
   private initGame(): void {
     this.boneyard = SetUtils.generateSet(this.setSize);
     this.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, this.boneyard));
-    let mexicanTrain = new Train(this.table.startingDouble, this.mexicanTrainId);
+    let mexicanTrain = new Train(this.table.startingDouble, Train.MEXICAN_TRAIN_ID);
     mexicanTrain.isPublic = true;
     this.table.trains.push(mexicanTrain);
 
@@ -139,7 +138,7 @@ export class GameController {
 
   private setDominoCountsOnHands(tableAndHand: TableAndHand): void {
     this.hands.forEach((dominos, handPlayerId) => {
-      if (handPlayerId !== this.mexicanTrainId) {
+      if (handPlayerId !== Train.MEXICAN_TRAIN_ID) {
         tableAndHand.dominosInPlayerHands.set(handPlayerId, dominos.size);
       }
     })
