@@ -29,10 +29,10 @@
   <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
 </div>
 
-<div class="example-boundary">
-  <div *ngFor="let domino of hand" class="example-box" (click)="changeOrientation(domino)"
+<div class="hand-boundary">
+  <div *ngFor="let domino of hand" class="domino" (click)="changeOrientation(domino)"
     [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"
-    cdkDragBoundary=".example-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
+    cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
     {{domino.left}} - {{domino.right}}
   </div>
 </div>

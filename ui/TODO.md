@@ -1,12 +1,12 @@
 
 # TODO 
-* control who is next (handle dropped players)
 * scrolling of trains
+* score player hands / show end of game
 * log of move history
+* control who is next (handle dropped players)
 * Rollback state
 * styling of dominos
 * warn on boneyard depletion?
-* score player hands / show end of game
 
 # To Done
 * Make Train public

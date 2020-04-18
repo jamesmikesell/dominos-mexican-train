@@ -1,7 +1,6 @@
 .domino-regular {
   width: 50px;
   height: 20px;
-
 }
 
 .domino-double {
@@ -9,7 +8,7 @@
   height: 50px;
 }
 
-.example-box {
+.domino {
   border: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   cursor: move;
@@ -23,6 +22,7 @@
   position: relative;
   z-index: 1;
   box-sizing: border-box;
+  line-height: 1;
   padding: 10px;
   transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
@@ -30,16 +30,15 @@
     0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.example-box:active {
+.domino:active {
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     0 8px 10px 1px rgba(0, 0, 0, 0.14),
     0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
-.example-boundary {
-  width: 400px;
-  height: 400px;
-  max-width: 100%;
+.hand-boundary {
+  max-width: 800px;
+  height: 200px;
   border: dotted #ccc 2px;
   margin-top: 10px;
 }
