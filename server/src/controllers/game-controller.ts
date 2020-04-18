@@ -47,6 +47,7 @@ export class GameController {
     let hand = this.getOrCreatePlayerHand(playerId);
 
     SetUtils.addRandomToHand(1, hand, this.boneyard);
+    this.lastUpdate = Date.now();
 
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
@@ -76,6 +77,7 @@ export class GameController {
       console.log("domino doesn't exist in player hand");
     }
 
+    this.lastUpdate = Date.now();
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
@@ -92,6 +94,8 @@ export class GameController {
     let isPublic = CommonTransformer.plainToClassSingle(Train, req.body).isPublic;
     let localTrain = this.table.trains.find(train => train.playerId === playerId);
     localTrain.isPublic = isPublic;
+
+    this.lastUpdate = Date.now();
 
     let hand = this.getOrCreatePlayerHand(playerId);
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
@@ -128,7 +132,6 @@ export class GameController {
     let tableAndHand = new TableAndHand();
     tableAndHand.hand = hand;
     tableAndHand.table = this.table;
-    this.lastUpdate = Date.now();
     tableAndHand.lastUpdate = this.lastUpdate;
     this.setDominoCountsOnHands(tableAndHand);
     tableAndHand.dominosInBoneyard = this.boneyard.size;
