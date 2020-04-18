@@ -19,6 +19,7 @@ export class MainComponent implements OnInit {
   trainToPlay: Train;
   playerId: string;
   playerHandCounts: Map<string, number>;
+  lastUpdate: number;
 
   constructor(
     private cookieService: CookieService,
@@ -32,12 +33,30 @@ export class MainComponent implements OnInit {
       return;
     }
 
-    this.http.get<TableAndHand>("/api/getTable")
+    this.checkFoUpdate();
+  }
+
+  checkFoUpdate(): void {
+    this.http.get<{ lastUpdate: number }>("/api/getLastUpdate")
       .toPromise()
-      .then(tableAndHand => {
-        this.setStateFromServer(tableAndHand);
+      .then(result => {
+        if (result.lastUpdate !== this.lastUpdate) {
+          return this.http.get<TableAndHand>("/api/getTable")
+            .toPromise()
+            .then(tableAndHand => {
+              this.setStateFromServer(tableAndHand);
+            });
+        } else {
+          return null;
+        }
+      })
+      .finally(() => {
+        setTimeout(() => {
+          this.checkFoUpdate();
+        }, 1000);
       });
   }
+
 
   private setStateFromServer(plainTableAndHand: TableAndHand): void {
     let tableAndHand = CommonTransformer.plainToClassSingle(TableAndHand, plainTableAndHand);
@@ -45,6 +64,7 @@ export class MainComponent implements OnInit {
     this.trains = tableAndHand.table.trains;
     this.playerId = this.cookieService.getPlayerId();
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
+    this.lastUpdate = tableAndHand.lastUpdate;
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);

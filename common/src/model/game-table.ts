@@ -50,6 +50,7 @@ export class TableAndHand {
     return map;
   }, { toClassOnly: true })
   dominosInPlayerHands = new Map<string, number>();
+  lastUpdate: number;
 }
 
 export class Move {

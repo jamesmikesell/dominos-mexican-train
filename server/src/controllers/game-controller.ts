@@ -12,7 +12,7 @@ export class GameController {
   private hands = new Map<string, Set<Domino>>();
   private boneYard: Set<Domino>;
   private readonly mexicanTrainId = "Viva Mexico";
-
+  private lastUpdate: number;
 
   private startingDouble = 9;
   private setSize = 9;
@@ -29,6 +29,7 @@ export class GameController {
     this.table.trains.push(mexicanTrain);
 
     this.hands.clear();
+    this.lastUpdate = Date.now();
   }
 
 
@@ -83,6 +84,11 @@ export class GameController {
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
+  @Get('getLastUpdate')
+  public getLastUpdate(req: Request, res: Response): void {
+    res.status(200).json({ lastUpdate: this.lastUpdate });
+  }
+
 
 
   private getPlayerId(req: Request, res: Response): string {
@@ -112,6 +118,8 @@ export class GameController {
     let tableAndHand = new TableAndHand();
     tableAndHand.hand = hand;
     tableAndHand.table = this.table;
+    this.lastUpdate = Date.now();
+    tableAndHand.lastUpdate = this.lastUpdate;
     this.setDominoCountsOnHands(tableAndHand);
 
     return tableAndHand;
