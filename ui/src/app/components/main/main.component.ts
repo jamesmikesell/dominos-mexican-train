@@ -4,6 +4,7 @@ import { Domino } from '@common/model/domino';
 import { TableAndHand, Train, Move } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../service/cookie.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -20,9 +21,15 @@ export class MainComponent implements OnInit {
 
   constructor(
     private cookieService: CookieService,
+    private router: Router,
     private http: HttpClient) { }
 
   ngOnInit(): void {
+    if (!this.cookieService.getPlayerId()) {
+      this.router.navigate(["/init"]);
+      return;
+    }
+
     this.http.get<TableAndHand>("/api/getTable")
       .toPromise()
       .then(tableAndHand => {

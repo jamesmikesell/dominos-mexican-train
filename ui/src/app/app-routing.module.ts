@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MainComponent } from './components/main/main.component';
 import { NameComponent } from './components/name/name.component';
+import { InitComponent } from './components/init/init.component';
 
 
 const routes: Routes = [
   {
-    path: "",
+    path: "game",
     component: MainComponent
   },
   {
@@ -15,7 +16,7 @@ const routes: Routes = [
   },
   {
     path: "**",
-    redirectTo: ""
+    component: InitComponent
   }
 ];
 

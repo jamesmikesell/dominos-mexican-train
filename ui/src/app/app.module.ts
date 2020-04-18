@@ -12,11 +12,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { NameComponent } from './components/name/name.component';
+import { InitComponent } from './components/init/init.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NameComponent,
+    InitComponent,
     MainComponent
   ],
   imports: [
