@@ -3,7 +3,6 @@
 * score player hands / show end of game
 * log of move history
 * control who is next (handle dropped players)
-* Rollback state
 * styling of dominos
 * warn on boneyard depletion?
 
@@ -13,3 +12,4 @@
 * Make it more apparent which train is yours
 * clear all (hidden) dominos in player's hand upon new game so domino's don't draw off screen
 * scrolling of trains
+* Rollback state

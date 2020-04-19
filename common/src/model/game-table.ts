@@ -64,3 +64,23 @@ export class Move {
   @Type(() => Train)
   train: Train;
 }
+
+
+export class GameState {
+  @Type(() => Hand)
+  hands: Hand[] = [];
+  @Type(() => GameTable)
+  table: GameTable;
+  @Type(() => Domino)
+  boneyard: Set<Domino>;
+}
+
+export class Hand {
+  playerId: string;
+  @Type(() => Domino)
+  dominos: Set<Domino> = new Set();
+
+  constructor(playerId: string) {
+    this.playerId = playerId;
+  }
+}

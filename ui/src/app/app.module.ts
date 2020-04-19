@@ -17,6 +17,7 @@ import { DialogAreYouSureComponent } from './components/dialog-are-you-sure/dial
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { TrainComponent } from './components/train/train.component';
+import { AdminComponent } from './components/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { TrainComponent } from './components/train/train.component';
     InitComponent,
     DialogAreYouSureComponent,
     MainComponent,
-    TrainComponent
+    TrainComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

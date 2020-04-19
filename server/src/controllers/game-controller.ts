@@ -1,33 +1,35 @@
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { Domino } from '../../../common/src/model/domino';
-import { GameTable, TableAndHand, Train, Move } from '../../../common/src/model/game-table';
+import { GameTable, TableAndHand, Train, Move, GameState, Hand } from '../../../common/src/model/game-table';
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 
 @Controller('api')
 export class GameController {
 
-  private table: GameTable;
-  private hands = new Map<string, Set<Domino>>();
-  private boneyard: Set<Domino>;
   private lastUpdate: number;
   private startingDouble = 9;
   private setSize = 9;
+  private savedStates: string[] = [];
+  private currentState: GameState;
 
   constructor() {
     this.initGame();
   }
 
   private initGame(): void {
-    this.boneyard = SetUtils.generateSet(this.setSize);
-    this.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, this.boneyard));
-    let mexicanTrain = new Train(this.table.startingDouble, Train.MEXICAN_TRAIN_ID);
+    let state = new GameState();
+    state.boneyard = SetUtils.generateSet(this.setSize);
+    state.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, state.boneyard));
+    let mexicanTrain = new Train(state.table.startingDouble, Train.MEXICAN_TRAIN_ID);
     mexicanTrain.isPublic = true;
-    this.table.trains.push(mexicanTrain);
+    state.table.trains.push(mexicanTrain);
 
-    this.hands.clear();
-    this.lastUpdate = Date.now();
+    this.savedStates.length = 0
+
+    this.currentState = state;
+    this.saveState();
   }
 
 
@@ -46,8 +48,8 @@ export class GameController {
     let playerId = this.getPlayerId(req, res);
     let hand = this.getOrCreatePlayerHand(playerId);
 
-    SetUtils.addRandomToHand(1, hand, this.boneyard);
-    this.lastUpdate = Date.now();
+    SetUtils.addRandomToHand(1, hand, this.currentState.boneyard);
+    this.saveState();
 
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
@@ -63,7 +65,7 @@ export class GameController {
     let domino = Array.from(hand).find(singleDomino => singleDomino.key === move.domino.key);
     if (domino) {
       try {
-        let train = this.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
+        let train = this.currentState.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
         if (train.playerId === playerId || train.isPublic) {
           train.addDomino(domino);
           hand.delete(domino)
@@ -77,7 +79,7 @@ export class GameController {
       console.log("domino doesn't exist in player hand");
     }
 
-    this.lastUpdate = Date.now();
+    this.saveState();
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
@@ -92,10 +94,10 @@ export class GameController {
   public setTrainStatus(req: Request, res: Response): void {
     let playerId = this.getPlayerId(req, res);
     let isPublic = CommonTransformer.plainToClassSingle(Train, req.body).isPublic;
-    let localTrain = this.table.trains.find(train => train.playerId === playerId);
+    let localTrain = this.currentState.table.trains.find(train => train.playerId === playerId);
     localTrain.isPublic = isPublic;
 
-    this.lastUpdate = Date.now();
+    this.saveState();
 
     let hand = this.getOrCreatePlayerHand(playerId);
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
@@ -103,7 +105,21 @@ export class GameController {
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
+  @Get('ctrlZ')
+  public undoLastGameStateChange(req: Request, res: Response): void {
+    // The last item on the array is actually the current state, so we need to go back 2 items
+    let savedStateJson = this.savedStates[this.savedStates.length - 2]
+    this.savedStates.length = this.savedStates.length - 1;
+    this.currentState = CommonTransformer.plainToClassSingle(GameState, JSON.parse(savedStateJson));
+    this.lastUpdate = Date.now();
 
+    res.status(200).json({ lastUpdate: this.lastUpdate });
+  }
+
+  private saveState(): void {
+    this.savedStates.push(JSON.stringify(CommonTransformer.classToPlainSingle(this.currentState)));
+    this.lastUpdate = Date.now();
+  }
 
   private getPlayerId(req: Request, res: Response): string {
     let playerId = req.cookies.playerId;
@@ -116,33 +132,36 @@ export class GameController {
   }
 
   private getOrCreatePlayerHand(playerId: string): Set<Domino> {
-    let hand = this.hands.get(playerId);
+    let hand = this.currentState.hands.find(singleHand => singleHand.playerId === playerId);
     if (!hand) {
-      hand = new Set();
-      SetUtils.addRandomToHand(8, hand, this.boneyard);
-      this.hands.set(playerId, hand);
+      hand = new Hand(playerId);
+      SetUtils.addRandomToHand(8, hand.dominos, this.currentState.boneyard);
+      this.currentState.hands.push(hand);
+      this.saveState();
     }
-    return hand;
+    return hand.dominos;
   }
 
   private bundleTableAndHand(playerId: string, hand: Set<Domino>): TableAndHand {
-    if (!this.table.trains.find(train => train.playerId === playerId))
-      this.table.trains.push(new Train(this.table.startingDouble, playerId));
+    if (!this.currentState.table.trains.find(train => train.playerId === playerId)) {
+      this.currentState.table.trains.push(new Train(this.currentState.table.startingDouble, playerId));
+      this.saveState();
+    }
 
     let tableAndHand = new TableAndHand();
     tableAndHand.hand = hand;
-    tableAndHand.table = this.table;
+    tableAndHand.table = this.currentState.table;
     tableAndHand.lastUpdate = this.lastUpdate;
     this.setDominoCountsOnHands(tableAndHand);
-    tableAndHand.dominosInBoneyard = this.boneyard.size;
+    tableAndHand.dominosInBoneyard = this.currentState.boneyard.size;
 
     return tableAndHand;
   }
 
   private setDominoCountsOnHands(tableAndHand: TableAndHand): void {
-    this.hands.forEach((dominos, handPlayerId) => {
-      if (handPlayerId !== Train.MEXICAN_TRAIN_ID) {
-        tableAndHand.dominosInPlayerHands.set(handPlayerId, dominos.size);
+    this.currentState.hands.forEach(hand => {
+      if (hand.playerId !== Train.MEXICAN_TRAIN_ID) {
+        tableAndHand.dominosInPlayerHands.set(hand.playerId, hand.dominos.size);
       }
     })
   }
