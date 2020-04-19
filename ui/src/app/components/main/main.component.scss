@@ -39,7 +39,7 @@
 
 .hand-boundary {
   max-width: 800px;
-  height: 200px;
+  min-height: 250px;
   border: dotted #ccc 2px;
   margin-top: 10px;
 }
