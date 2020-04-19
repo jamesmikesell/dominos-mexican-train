@@ -22,6 +22,7 @@ export class MainComponent implements OnInit {
   lastUpdate: number;
   dominosInBoneyard = 0;
   gameId: number;
+  log: string;
 
   constructor(
     private cookieService: CookieService,
@@ -95,6 +96,7 @@ export class MainComponent implements OnInit {
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
     this.lastUpdate = tableAndHand.lastUpdate;
     this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
+    this.log = tableAndHand.table.playLog.reverse().join("\n");
     this.sortTrains(this.trains);
     if (this.gameId !== tableAndHand.table.gameId) {
       this.gameId = tableAndHand.table.gameId;

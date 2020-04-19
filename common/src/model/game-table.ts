@@ -7,6 +7,7 @@ export class GameTable {
   @Type(() => Domino)
   startingDouble: Domino;
   gameId: number;
+  playLog: string[] = [];
 
   constructor(startingDouble: Domino) {
     this.startingDouble = startingDouble;
@@ -82,5 +83,15 @@ export class Hand {
 
   constructor(playerId: string) {
     this.playerId = playerId;
+  }
+}
+
+export class Scores {
+  playerId: string;
+  score: number;
+
+  constructor(playerId: string, score: number) {
+    this.playerId = playerId;
+    this.score = score;
   }
 }

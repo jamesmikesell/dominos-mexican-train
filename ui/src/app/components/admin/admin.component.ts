@@ -20,4 +20,9 @@ export class AdminComponent implements OnInit {
       .toPromise();
   }
 
+  getScores(): void {
+    this.http.get<void>("/api/getScores")
+      .toPromise();
+  }
+
 }

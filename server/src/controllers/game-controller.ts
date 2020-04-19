@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { Domino } from '../../../common/src/model/domino';
-import { GameTable, TableAndHand, Train, Move, GameState, Hand } from '../../../common/src/model/game-table';
+import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores } from '../../../common/src/model/game-table';
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 
@@ -9,8 +9,9 @@ import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 export class GameController {
 
   private lastUpdate: number;
-  private startingDouble = 9;
-  private setSize = 9;
+  private startingDouble = 11;
+  private setSize = 12;
+  private startingHandSize = 12;
   private savedStates: string[] = [];
   private currentState: GameState;
 
@@ -29,6 +30,7 @@ export class GameController {
     this.savedStates.length = 0
 
     this.currentState = state;
+    this.addToLog("New game started");
     this.saveState();
   }
 
@@ -49,6 +51,7 @@ export class GameController {
     let hand = this.getOrCreatePlayerHand(playerId);
 
     SetUtils.addRandomToHand(1, hand, this.currentState.boneyard);
+    this.addToLog(`${playerId} drew from the boneyard`);
     this.saveState();
 
     let tableAndHand = this.bundleTableAndHand(playerId, hand);
@@ -69,6 +72,8 @@ export class GameController {
         if (train.playerId === playerId || train.isPublic) {
           train.addDomino(domino);
           hand.delete(domino)
+
+          this.addToLog(`${playerId} played a ${domino.left}-${domino.right} on ${train.playerId}'s train`);
         } else {
           console.log("Train isn't players nor public");
         }
@@ -97,6 +102,7 @@ export class GameController {
     let localTrain = this.currentState.table.trains.find(train => train.playerId === playerId);
     localTrain.isPublic = isPublic;
 
+    this.addToLog(`${playerId} went ${isPublic ? 'public' : 'private'}`);
     this.saveState();
 
     let hand = this.getOrCreatePlayerHand(playerId);
@@ -114,6 +120,28 @@ export class GameController {
     this.lastUpdate = Date.now();
 
     res.status(200).json({ lastUpdate: this.lastUpdate });
+  }
+
+  @Get('getScores')
+  public getScores(req: Request, res: Response): void {
+    let scores: Scores[] = [];
+    this.currentState.hands.forEach(hand => {
+      let score = 0
+      Array.from(hand.dominos)
+        .forEach(domino => {
+          score = domino.left + domino.right + score;
+        });
+
+      this.addToLog(`${hand.playerId} - ${score}`);
+      scores.push(new Scores(hand.playerId, score));
+    })
+
+    this.saveState();
+    res.status(200).json({ scores: scores });
+  }
+
+  private addToLog(message: string): void {
+    this.currentState.table.playLog.push(message);
   }
 
   private saveState(): void {
@@ -135,8 +163,9 @@ export class GameController {
     let hand = this.currentState.hands.find(singleHand => singleHand.playerId === playerId);
     if (!hand) {
       hand = new Hand(playerId);
-      SetUtils.addRandomToHand(8, hand.dominos, this.currentState.boneyard);
+      SetUtils.addRandomToHand(this.startingHandSize, hand.dominos, this.currentState.boneyard);
       this.currentState.hands.push(hand);
+      this.addToLog(`${playerId} joined game.`)
       this.saveState();
     }
     return hand.dominos;
