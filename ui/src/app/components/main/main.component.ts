@@ -180,6 +180,7 @@ export class MainComponent implements OnInit {
     let move = new Move();
     move.domino = domino;
     move.train = this.trainToPlay;
+    this.trainToPlay = undefined;
     this.http.post<TableAndHand>("/api/playPiece", CommonTransformer.classToPlainSingle(move))
       .toPromise()
       .then(tableAndHand => {
