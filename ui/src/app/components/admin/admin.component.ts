@@ -25,4 +25,9 @@ export class AdminComponent implements OnInit {
       .toPromise();
   }
 
+  forceNextTurn(): void {
+    this.http.post<void>("/api/forceNextTurn", {})
+      .toPromise();
+  }
+
 }

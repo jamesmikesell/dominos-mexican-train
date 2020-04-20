@@ -6,6 +6,7 @@ import { Move, TableAndHand, Train } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../service/cookie.service';
 import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-main',
@@ -23,10 +24,12 @@ export class MainComponent implements OnInit {
   dominosInBoneyard = 0;
   gameId: number;
   log: string;
+  currentTurnPlayerId: string;
 
   constructor(
     private cookieService: CookieService,
     private router: Router,
+    private snackBar: MatSnackBar,
     private yesNoLauncher: LauncherAreYouSure,
     private http: HttpClient) { }
 
@@ -96,6 +99,9 @@ export class MainComponent implements OnInit {
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
     this.lastUpdate = tableAndHand.lastUpdate;
     this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
+    let prevPlayersTurn = this.currentTurnPlayerId;
+    this.currentTurnPlayerId = tableAndHand.table.currentTurnPlayerId;
+    this.warnItsYourTurn(prevPlayersTurn, tableAndHand.table.currentTurnPlayerId);
     this.log = tableAndHand.table.playLog.reverse().join("\n");
     this.sortTrains(this.trains);
     if (this.gameId !== tableAndHand.table.gameId) {
@@ -107,6 +113,11 @@ export class MainComponent implements OnInit {
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);
+  }
+
+  private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {
+    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.playerId)
+      this.snackBar.open("Your Turn!", undefined, { duration: 3000, verticalPosition: "top" });
   }
 
   private sortTrains(trains: Train[]): void {
@@ -169,6 +180,7 @@ export class MainComponent implements OnInit {
   trainCanBePlayed(train: Train): boolean {
     return (!this.trainToPlay || this.trainToPlay.playerId === train.playerId)
       && (train.isPublic || train.playerId === this.playerId)
+      && (!this.currentTurnPlayerId || this.currentTurnPlayerId === this.playerId);
   }
 
   toggleTrainToPlay(train: Train): void {
@@ -209,6 +221,15 @@ export class MainComponent implements OnInit {
           });
       }
     });
+  }
+
+  turnFinished(): void {
+    this.trainToPlay = undefined;
+    this.http.post<TableAndHand>("/api/doneWithTurn", {})
+      .toPromise()
+      .then(tableAndHand => {
+        this.setStateFromServer(tableAndHand);
+      });
   }
 
 

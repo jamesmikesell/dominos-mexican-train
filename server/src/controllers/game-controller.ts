@@ -140,6 +140,57 @@ export class GameController {
     res.status(200).json({ scores: scores });
   }
 
+  @Post('doneWithTurn')
+  public doneWithTurn(req: Request, res: Response): void {
+    let playerId = this.getPlayerId(req, res);
+
+    this.nextPlayer(playerId, false);
+
+    let hand = this.getOrCreatePlayerHand(playerId);
+    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
+  }
+
+
+  @Post('forceNextTurn')
+  public forceNextTurn(req: Request, res: Response): void {
+    let playerId = this.getPlayerId(req, res);
+    this.nextPlayer(playerId, true);
+    res.status(200).json({});
+  }
+
+
+  private nextPlayer(playerId: string, force: boolean): void {
+    let currentPlayer = this.currentState.table.currentTurnPlayerId;
+
+    // handle the first move of the game when anyone can make a move
+    if (!currentPlayer)
+      currentPlayer = playerId;
+
+    if (currentPlayer !== playerId && !force)
+      return;
+
+    let players = this.currentState.hands.map(hand => hand.playerId);
+    players.sort((a, b) => a.localeCompare(b));
+
+    if (!currentPlayer) {
+      this.currentState.table.currentTurnPlayerId = players[0];
+    } else {
+      let index = players.indexOf(currentPlayer);
+      if (index < 0 || index === (players.length - 1))
+        this.currentState.table.currentTurnPlayerId = players[0];
+      else
+        this.currentState.table.currentTurnPlayerId = players[index + 1];
+    }
+
+    if (force)
+      this.addToLog(`${this.currentState.table.currentTurnPlayerId}'s turn. ${playerId} forced ${currentPlayer}'s turn to end.`);
+    else
+      this.addToLog(`${this.currentState.table.currentTurnPlayerId}'s turn. ${playerId} just finished their turn.`);
+
+    this.saveState();
+  }
+
   private addToLog(message: string): void {
     this.currentState.table.playLog.push(message);
   }

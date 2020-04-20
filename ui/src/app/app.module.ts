@@ -19,6 +19,7 @@ import { MatListModule } from '@angular/material/list';
 import { TrainComponent } from './components/train/train.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatButtonModule,
     MatDividerModule,
+    MatSnackBarModule,
     MatBottomSheetModule,
     MatListModule,
     MatCheckboxModule,

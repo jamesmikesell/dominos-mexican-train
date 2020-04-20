@@ -1,10 +1,10 @@
 
 # TODO 
 * allow setting of domino set size / hand size in admin screen
+* allow resetting of game from admin screen
 * add nav bar so admin / name change can be accessed; upon name change, alert server so it can rename hands..... or do the right thing and decouple player name from ID
 * websockets instead of polling
-* allow resetting of game from admin screen
-* control who is next (handle dropped players)
+* track scores across multiple rounds?
 * styling of dominos
 * warn on boneyard depletion?
 
@@ -17,3 +17,4 @@
 * Rollback state
 * score player hands / show end of game
 * log of move history
+* control who is next (handle dropped players)

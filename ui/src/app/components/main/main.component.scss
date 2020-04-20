@@ -60,17 +60,29 @@
   margin-top: 10px;
 }
 
+.hand-my-turn {
+  --color-a: #637c73;
+  --color-b: #8c9275;
+  background:
+    linear-gradient(45deg, var(--color-a) 45px, transparent 45px)64px 64px,
+    linear-gradient(45deg, var(--color-a) 45px, transparent 45px, transparent 91px, var(--color-b) 91px, var(--color-b) 135px, transparent 135px),
+    linear-gradient(-45deg, var(--color-a) 23px, transparent 23px, transparent 68px, var(--color-a) 68px, var(--color-a) 113px, transparent 113px, transparent 158px, var(--color-a) 158px);
+  background-color: var(--color-b);
+  background-size: 128px 128px;
+}
+
 .hidden {
   visibility: hidden;
 }
 
 .controls {
-  margin-left: -10px;
-  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .controls>* {
   margin-left: 10px;
+  margin-top: 10px;
 }
 
 .trains>* {
@@ -102,4 +114,7 @@
   margin-bottom: 4px;
 
 }
+
+.checkbox {
+  padding-top: 5px;
 }

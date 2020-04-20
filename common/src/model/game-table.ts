@@ -8,6 +8,7 @@ export class GameTable {
   startingDouble: Domino;
   gameId: number;
   playLog: string[] = [];
+  currentTurnPlayerId: string;
 
   constructor(startingDouble: Domino) {
     this.startingDouble = startingDouble;
