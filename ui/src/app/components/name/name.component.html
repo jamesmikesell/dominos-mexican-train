@@ -1,6 +1,6 @@
 <mat-form-field class="player-name">
   <mat-label>Player Name</mat-label>
-  <input matInput placeholder="" [(ngModel)]="name">
+  <input matInput placeholder="" [(ngModel)]="name" maxlength="10">
 </mat-form-field>
 
 <button type="button" mat-raised-button color="primary" (click)="save()">Save</button>

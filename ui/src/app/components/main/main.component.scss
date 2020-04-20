@@ -94,7 +94,7 @@
   margin-top: 3px;
   margin-left: 10px;
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .trains-dominos {
