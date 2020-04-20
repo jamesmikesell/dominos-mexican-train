@@ -25,16 +25,16 @@
 }
 
 .domino {
-  border: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
   cursor: move;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: #fff;
+  background: #494949;
   border-radius: 4px;
   margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
   position: relative;
   z-index: 1;
   box-sizing: border-box;
@@ -58,6 +58,7 @@
   min-height: 250px;
   border: dotted #ccc 2px;
   margin-top: 10px;
+  border-radius: 6px;
 }
 
 .hand-my-turn {
