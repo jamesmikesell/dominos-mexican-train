@@ -192,11 +192,13 @@ export class MainComponent implements OnInit {
 
   trainCanBePlayed(train: Train): boolean {
     return (!this.trainToPlay || this.trainToPlay.playerId === train.playerId)
-      && (train.isPublic || train.playerId === this.playerId)
-      && (!this.currentTurnPlayerId || this.currentTurnPlayerId === this.playerId);
+      && (train.isPublic || train.playerId === this.playerId);
   }
 
   toggleTrainToPlay(train: Train): void {
+    if (this.currentTurnPlayerId && this.currentTurnPlayerId !== this.playerId)
+      return;
+
     if (this.trainToPlay)
       this.trainToPlay = undefined;
     else
