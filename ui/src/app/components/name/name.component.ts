@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class NameComponent implements OnInit {
 
   private _name: string;
+  hadNameAtStart: boolean;
   get name(): string {
     return this._name;
   }
@@ -25,6 +26,7 @@ export class NameComponent implements OnInit {
 
   ngOnInit(): void {
     this._name = this.cookieService.getPlayerId();
+    this.hadNameAtStart= !!this._name;
   }
 
   save(): void {
