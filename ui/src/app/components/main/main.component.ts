@@ -186,7 +186,6 @@ export class MainComponent implements OnInit {
       this.playPiece(domino);
     } else {
       domino.flip();
-      console.log("click");
     }
   }
 
