@@ -18,6 +18,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { TrainComponent } from './components/train/train.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { AdminComponent } from './components/admin/admin.component';
     FormsModule,
     MatInputModule,
     MatButtonModule,
+    MatDividerModule,
     MatBottomSheetModule,
     MatListModule,
     MatCheckboxModule,
