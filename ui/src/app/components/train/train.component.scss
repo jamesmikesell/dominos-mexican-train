@@ -7,3 +7,17 @@
 .train-domino-inner {
   white-space: nowrap;
 }
+
+.double-warn {
+  color: #f00;
+  font-weight: bold;
+}
+
+.domino {
+  display: inline-block;
+  margin-right: .3em;
+}
+
+.double {
+  transform: rotate(90deg);
+}

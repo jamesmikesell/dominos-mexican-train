@@ -20,3 +20,4 @@
 * add nav bar so admin / name change can be accessed; 
 * styling of dominos
 * show public trains when it's not your turn
+* warn when there is an unsatisfied double

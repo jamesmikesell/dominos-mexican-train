@@ -1,7 +1,8 @@
 <div class="train-dominos-container" #scrollMe>
   <div class="train-domino-inner">
-    <ng-container *ngFor="let domino of train.dominoes">
+    <div *ngFor="let domino of train.dominoes; last as isLast" class="domino"
+      [class.double-warn]="isLast && domino.isDouble" [class.double]="domino.isDouble">
       {{domino.left}}|{{domino.right}}
-    </ng-container>
+    </div>
   </div>
 </div>
