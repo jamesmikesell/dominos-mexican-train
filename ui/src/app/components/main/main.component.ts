@@ -7,6 +7,7 @@ import { CommonTransformer } from '@common/util/conversion-utils';
 import { CookieService } from '../../service/cookie.service';
 import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NavTitleService } from '../../service/nav-title.service';
 
 @Component({
   selector: 'app-main',
@@ -21,16 +22,18 @@ export class MainComponent implements OnInit {
   playerId: string;
   playerHandCounts: Map<string, number>;
   lastUpdate: number;
-  dominosInBoneyard = 0;
   gameId: number;
   log: string;
   currentTurnPlayerId: string;
+
+  private dominosInBoneyard = 0;
 
   constructor(
     private cookieService: CookieService,
     private router: Router,
     private snackBar: MatSnackBar,
     private yesNoLauncher: LauncherAreYouSure,
+    private navTitleService: NavTitleService,
     private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -113,6 +116,16 @@ export class MainComponent implements OnInit {
 
     // Sync hands, as replacing local hand with new array will cause UI to rearrange the user's hand
     this.syncHand(tableAndHand.hand);
+    this.setTitle();
+  }
+
+  private setTitle(): void {
+    if (this.trains && this.trains.length)
+      this.navTitleService.line1 = `Starting Domino: ${this.trains[0].startingDouble.left}`;
+    else
+      this.navTitleService.line1 = undefined;
+
+    this.navTitleService.line2 = `Boneyard (${this.dominosInBoneyard})`;
   }
 
   private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {

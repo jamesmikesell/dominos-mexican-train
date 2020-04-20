@@ -1,8 +1,3 @@
-<h1 class="starting-domino" *ngIf="trains && trains.length">Starting Domino: {{trains[0].startingDouble.left}}</h1>
-<h3 class="boneyard">Boneyard ({{dominosInBoneyard}})</h3>
-
-<mat-divider class="divider"></mat-divider>
-
 <div class="trains">
   <ng-container *ngFor="let train of trains">
     <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"

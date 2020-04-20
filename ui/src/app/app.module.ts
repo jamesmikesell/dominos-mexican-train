@@ -20,6 +20,11 @@ import { TrainComponent } from './components/train/train.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NavComponent } from './components/nav/nav.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -29,7 +34,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     DialogAreYouSureComponent,
     MainComponent,
     TrainComponent,
-    AdminComponent
+    AdminComponent,
+    NavComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +50,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatListModule,
     MatCheckboxModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    LayoutModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

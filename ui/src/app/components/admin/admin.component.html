@@ -1,27 +1,31 @@
-<h1>Admin</h1>
+<div class="container">
+
+  <h1>Admin</h1>
 
 
-<button (click)="undoLastMove()" mat-raised-button type="button" color="warn">
-  Undo Last Change
-</button>
+  <button (click)="undoLastMove()" mat-raised-button type="button" color="warn">
+    Undo Last Change
+  </button>
 
-<br><br>Warning, undoing the last move can have bad consequences if a player joins mid game...<br><br>
+  <br><br>Warning, undoing the last move can have bad consequences if a player joins mid game...<br><br>
 
-IE Player A makes a move, then Player B joins. If you try to roll back the move, you'll first undo Player B joining
-(which means Player B will then get a new hand).<br><br>
+  IE Player A makes a move, then Player B joins. If you try to roll back the move, you'll first undo Player B joining
+  (which means Player B will then get a new hand).<br><br>
 
-Also, a player changing their train's public / private state could be undone as part of rolling back changes.
+  Also, a player changing their train's public / private state could be undone as part of rolling back changes.
 
-<br>
-<br>
-<button (click)="getScores()" mat-raised-button type="button" color="primary">
-  Show Scores in Log
-</button>
+  <br>
+  <br>
+  <button (click)="getScores()" mat-raised-button type="button" color="primary">
+    Show Scores in Log
+  </button>
 
-<br>
-<br>
-<button (click)="forceNextTurn()" mat-raised-button type="button" color="primary">
-  Force Next Turn
-</button>
+  <br>
+  <br>
+  <button (click)="forceNextTurn()" mat-raised-button type="button" color="primary">
+    Force Next Turn
+  </button>
 
 
+
+</div>
