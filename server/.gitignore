@@ -44,3 +44,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# exclude everything
+src/public/*
+
+# exception to the rule
+!src/public/.gitkeep 

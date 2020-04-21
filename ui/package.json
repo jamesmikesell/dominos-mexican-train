@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "startExternal": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
-    "build": "ng build",
+    "build": "ng build --prod && npm run cleanPublic && npm run moveToPublic",
+    "cleanPublic": "rm -rf ../server/src/public/*",
+    "moveToPublic": "mv dist/dominoes/* ../server/src/public ",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

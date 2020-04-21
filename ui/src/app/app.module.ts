@@ -26,6 +26,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { APP_BASE_HREF } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,12 @@ import { MatCardModule } from '@angular/material/card';
     MatSidenavModule,
     MatIconModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useValue: '/app'
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
