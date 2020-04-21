@@ -125,7 +125,7 @@ export class MainComponent implements OnInit {
     else
       this.navTitleService.line1 = undefined;
 
-    this.navTitleService.line2 = `Boneyard (${this.dominosInBoneyard})`;
+    this.navTitleService.line2 = `Boneyard - ${this.dominosInBoneyard} dominos remaining`;
   }
 
   private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {
