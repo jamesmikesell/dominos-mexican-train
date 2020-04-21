@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { Domino } from '../../../common/src/model/domino';
-import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores } from '../../../common/src/model/game-table';
+import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores, GameSettings } from '../../../common/src/model/game-table';
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 
@@ -9,20 +9,22 @@ import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 export class GameController {
 
   private lastUpdate: number;
-  private startingDouble = 11;
-  private setSize = 12;
-  private startingHandSize = 12;
+  private gameSettings: GameSettings;
   private savedStates: string[] = [];
   private currentState: GameState;
 
   constructor() {
+    this.gameSettings = new GameSettings();
+    this.gameSettings.setDoubleSize = 12;
+    this.gameSettings.startingHandSize = 12;
+    this.gameSettings.gameStartDomino = 12;
     this.initGame();
   }
 
   private initGame(): void {
     let state = new GameState();
-    state.boneyard = SetUtils.generateSet(this.setSize);
-    state.table = new GameTable(SetUtils.popDoubleFromSet(this.startingDouble, state.boneyard));
+    state.boneyard = SetUtils.generateSet(this.gameSettings.setDoubleSize);
+    state.table = new GameTable(SetUtils.popDoubleFromSet(this.gameSettings.gameStartDomino, state.boneyard));
     let mexicanTrain = new Train(state.table.startingDouble, Train.MEXICAN_TRAIN_ID);
     mexicanTrain.isPublic = true;
     state.table.trains.push(mexicanTrain);
@@ -160,6 +162,22 @@ export class GameController {
   }
 
 
+  @Get('getSettings')
+  public getSettings(req: Request, res: Response): void {
+    res.status(200).json(CommonTransformer.classToPlainSingle(this.gameSettings));
+  }
+
+  @Post('setSettings')
+  public setSettings(req: Request, res: Response): void {
+    let settings = CommonTransformer.plainToClassSingle(GameSettings, req.body);
+    settings.gameStartDomino = Math.min(settings.gameStartDomino, settings.setDoubleSize);
+    this.gameSettings = settings;
+    this.initGame();
+
+    res.status(200).json(CommonTransformer.classToPlainSingle(this.gameSettings));
+  }
+
+
   private nextPlayer(playerId: string, force: boolean): void {
     let currentPlayer = this.currentState.table.currentTurnPlayerId;
 
@@ -214,7 +232,7 @@ export class GameController {
     let hand = this.currentState.hands.find(singleHand => singleHand.playerId === playerId);
     if (!hand) {
       hand = new Hand(playerId);
-      SetUtils.addRandomToHand(this.startingHandSize, hand.dominos, this.currentState.boneyard);
+      SetUtils.addRandomToHand(this.gameSettings.startingHandSize, hand.dominos, this.currentState.boneyard);
       this.currentState.hands.push(hand);
       this.addToLog(`${playerId} joined game.`)
       this.saveState();

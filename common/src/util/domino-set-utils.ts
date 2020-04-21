@@ -36,7 +36,8 @@ export class SetUtils {
         break;
 
       let random = this.popRandom(boneYard);
-      hand.add(random);
+      if (random)
+        hand.add(random);
     }
   }
 }

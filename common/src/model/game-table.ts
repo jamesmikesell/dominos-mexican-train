@@ -96,3 +96,9 @@ export class Scores {
     this.score = score;
   }
 }
+
+export class GameSettings {
+  startingHandSize: number;
+  setDoubleSize: number;
+  gameStartDomino: number;
+}

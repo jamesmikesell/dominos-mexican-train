@@ -1,31 +1,86 @@
 <div class="container">
 
-  <h1>Admin</h1>
+  <mat-card *ngIf="gameSettings">
+    <mat-card-header>
+      <mat-card-title>Game Settings</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
 
 
-  <button (click)="undoLastMove()" mat-raised-button type="button" color="warn">
-    Undo Last Change
-  </button>
+    <mat-card-content>
+      <h3 class="settings-heading">Recommended Settings</h3>
+      <ul class="list">
+        <li>2-3 players: Set Double-9; Hand Size 8.</li>
+        <li>4-6 players: Set Double-12; Hand Size 12.</li>
+        <li>7-8 players: Set Double-12; Hand Size 10.</li>
+        <li>9-12 players: Set Double-15; Hand Size 11.</li>
+        <li>13-14 players: Set Double-18; Hand Size 11.</li>
+      </ul>
 
-  <br><br>Warning, undoing the last move can have bad consequences if a player joins mid game...<br><br>
+      <mat-form-field>
+        <mat-label>Set Size (Double-{{gameSettings.setDoubleSize}})</mat-label>
+        <input matInput type="number" placeholder="" [(ngModel)]="gameSettings.setDoubleSize" min="1" max="100000">
+      </mat-form-field>
 
-  IE Player A makes a move, then Player B joins. If you try to roll back the move, you'll first undo Player B joining
-  (which means Player B will then get a new hand).<br><br>
+      <mat-form-field>
+        <mat-label>Train Starting Domino</mat-label>
+        <input matInput type="number" placeholder="" [(ngModel)]="gameSettings.gameStartDomino" min="0"
+          [max]="gameSettings.setDoubleSize">
+      </mat-form-field>
 
-  Also, a player changing their train's public / private state could be undone as part of rolling back changes.
+      <mat-form-field>
+        <mat-label>Hand Size</mat-label>
+        <input matInput type="number" placeholder="" [(ngModel)]="gameSettings.startingHandSize" min="0" max="50">
+      </mat-form-field>
 
-  <br>
-  <br>
-  <button (click)="getScores()" mat-raised-button type="button" color="primary">
-    Show Scores in Log
-  </button>
+      <br>
+      <button type="button" mat-raised-button color="primary" (click)="saveSettings()">Save Settings</button>
+    </mat-card-content>
+  </mat-card>
 
-  <br>
-  <br>
-  <button (click)="forceNextTurn()" mat-raised-button type="button" color="primary">
-    Force Next Turn
-  </button>
 
+
+
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>In-Game Controls</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+
+      <br>
+      <button (click)="forceNextTurn()" mat-raised-button type="button" color="primary">
+        Force Next Turn
+      </button>
+
+      <br>
+      <br>
+      <button (click)="undoLastMove()" mat-raised-button type="button" color="warn">
+        Undo Last Change
+      </button>
+
+      <br><br>Warning, undoing the last move can have bad consequences if a player joins mid game...<br><br>
+
+      IE Player A makes a move, then Player B joins. If you try to roll back the move, you'll first undo Player B
+      joining
+      (which means Player B will then get a new hand).<br><br>
+
+      Also, a player changing their train's public / private state could be undone as part of rolling back changes.
+
+      <br>
+      <br>
+      <button (click)="getScores()" mat-raised-button type="button" color="primary">
+        Show Scores in Log
+      </button>
+
+
+
+    </mat-card-content>
+  </mat-card>
 
 
 </div>
