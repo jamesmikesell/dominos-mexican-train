@@ -2,7 +2,6 @@
 # TODO 
 * upon name change, alert server so it can rename hands..... or do the right thing and decouple player name from ID
 * websockets instead of polling
-* track scores across multiple rounds?
 * warn on boneyard depletion?
 
 # To Done
@@ -21,3 +20,4 @@
 * warn when there is an unsatisfied double
 * allow setting of domino set size / hand size in admin screen
 * allow resetting of game from admin screen
+* track scores across multiple rounds?

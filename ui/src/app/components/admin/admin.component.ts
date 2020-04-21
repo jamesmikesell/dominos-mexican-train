@@ -37,6 +37,11 @@ export class AdminComponent implements OnInit {
       })
   }
 
+  clearCombinedScores(): void {
+    this.http.post<void>("/api/clearCombinedScores", {})
+      .toPromise();
+  }
+
   undoLastMove(): void {
     this.http.get<void>("/api/ctrlZ")
       .toPromise();

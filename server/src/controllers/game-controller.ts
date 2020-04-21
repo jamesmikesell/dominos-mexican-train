@@ -4,6 +4,7 @@ import { Domino } from '../../../common/src/model/domino';
 import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores, GameSettings } from '../../../common/src/model/game-table';
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
+import { GameScorer } from './game-score';
 
 @Controller('api')
 export class GameController {
@@ -12,6 +13,7 @@ export class GameController {
   private gameSettings: GameSettings;
   private savedStates: string[] = [];
   private currentState: GameState;
+  private gameScores = new Map<number, Scores[]>();
 
   constructor() {
     this.gameSettings = new GameSettings();
@@ -126,20 +128,17 @@ export class GameController {
 
   @Get('getScores')
   public getScores(req: Request, res: Response): void {
-    let scores: Scores[] = [];
-    this.currentState.hands.forEach(hand => {
-      let score = 0
-      Array.from(hand.dominos)
-        .forEach(domino => {
-          score = domino.left + domino.right + score;
-        });
-
-      this.addToLog(`${hand.playerId} - ${score}`);
-      scores.push(new Scores(hand.playerId, score));
-    })
+    GameScorer.score(this.gameScores, this.currentState.table.gameId, this.currentState.hands)
+      .forEach(logMessage => this.addToLog(logMessage));
 
     this.saveState();
-    res.status(200).json({ scores: scores });
+    res.status(200).json({});
+  }
+
+  @Post('clearCombinedScores')
+  public clearCombinedScores(req: Request, res: Response): void {
+    this.gameScores.clear();
+    res.status(200).json({});
   }
 
   @Post('doneWithTurn')
