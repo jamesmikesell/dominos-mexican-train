@@ -4,6 +4,7 @@ import { Server } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import compression from 'compression';
 
 export class DominoServer extends Server {
 
@@ -11,6 +12,7 @@ export class DominoServer extends Server {
 
   constructor() {
     super(true);
+    this.app.use(compression());
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());
     this.app.use(bodyParser.urlencoded({ extended: true }));
