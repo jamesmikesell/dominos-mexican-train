@@ -16,8 +16,12 @@
 .domino {
   display: inline-block;
   margin-right: .3em;
+  vertical-align: middle;
 }
 
 .double {
-  transform: rotate(90deg);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  display: inline-block;
+  overflow: visible;
 }

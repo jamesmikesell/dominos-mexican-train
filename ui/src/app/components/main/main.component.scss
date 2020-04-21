@@ -81,10 +81,6 @@
   grid-template-columns: auto minmax(0, 1fr);
 }
 
-.trains-dominos {
-  margin-top: 17px !important;
-}
-
 .log {
   white-space: pre-wrap;
   margin-left: 8px
@@ -102,4 +98,8 @@
 
 .checkbox {
   padding-top: 5px;
+}
+
+.single-train {
+  align-self: center;
 }
