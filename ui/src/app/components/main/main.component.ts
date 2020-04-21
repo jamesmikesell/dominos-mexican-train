@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Domino } from '@common/model/domino';
 import { Move, TableAndHand, Train } from '@common/model/game-table';
@@ -14,7 +14,7 @@ import { NavTitleService } from '../../service/nav-title.service';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
 
   hand: UIDomino[] = [];
   trains: Train[];
@@ -25,6 +25,8 @@ export class MainComponent implements OnInit {
   gameId: number;
   log: string;
   currentTurnPlayerId: string;
+  private poll = true;
+
 
   private dominosInBoneyard = 0;
 
@@ -36,6 +38,7 @@ export class MainComponent implements OnInit {
     private navTitleService: NavTitleService,
     private http: HttpClient) { }
 
+
   ngOnInit(): void {
     if (!this.cookieService.getPlayerId()) {
       this.router.navigate(["/init"]);
@@ -46,7 +49,14 @@ export class MainComponent implements OnInit {
     this.checkFoUpdate();
   }
 
+  ngOnDestroy(): void {
+    this.poll = false;
+  }
+
   checkFoUpdate(): void {
+    if (!this.poll)
+      return;
+
     this.http.get<{ lastUpdate: number }>("/api/getLastUpdate")
       .toPromise()
       .then(result => {
