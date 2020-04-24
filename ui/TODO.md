@@ -2,7 +2,6 @@
 # TODO 
 * ranking bug
 * vibrate on turn
-* show player turn in train
 * websockets instead of polling
 * warn on boneyard depletion?
 
@@ -25,3 +24,4 @@
 * track scores across multiple rounds?
 * upon name change, alert server so it can rename hands..... or do the right thing and decouple player name from ID
 * name login cookie bug
+* show player turn in train

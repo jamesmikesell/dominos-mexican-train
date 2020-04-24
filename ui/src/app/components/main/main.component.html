@@ -4,6 +4,9 @@
     <ng-container *ngFor="let train of trains">
       <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
         [color]="getTrainColor(train)">
+        <ng-container *ngIf="currentTurnPlayerId === train.playerId">
+          ->
+        </ng-container>
         {{train.playerName}}
         <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
           ({{playerHandCounts.get(train.playerId)}})
