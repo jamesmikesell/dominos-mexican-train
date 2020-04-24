@@ -1,6 +1,8 @@
 
 # TODO 
-* upon name change, alert server so it can rename hands..... or do the right thing and decouple player name from ID
+* ranking bug
+* vibrate on turn
+* show player turn in train
 * websockets instead of polling
 * warn on boneyard depletion?
 
@@ -21,3 +23,5 @@
 * allow setting of domino set size / hand size in admin screen
 * allow resetting of game from admin screen
 * track scores across multiple rounds?
+* upon name change, alert server so it can rename hands..... or do the right thing and decouple player name from ID
+* name login cookie bug

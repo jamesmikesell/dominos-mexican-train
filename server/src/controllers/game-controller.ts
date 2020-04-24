@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import { Domino } from '../../../common/src/model/domino';
-import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores, GameSettings } from '../../../common/src/model/game-table';
+import { GameTable, TableAndHand, Train, Move, GameState, Hand, Scores, GameSettings, Player } from '../../../common/src/model/game-table';
 import { SetUtils } from '../../../common/src/util/domino-set-utils';
 import { CommonTransformer } from '../../../common/src/util/conversion-utils';
 import { GameScorer } from './game-score';
@@ -14,6 +14,7 @@ export class GameController {
   private savedStates: string[] = [];
   private currentState: GameState;
   private gameScores = new Map<number, Scores[]>();
+  private playerMap = new Map<string, Player>();
 
   constructor() {
     this.gameSettings = new GameSettings();
@@ -28,6 +29,7 @@ export class GameController {
     state.boneyard = SetUtils.generateSet(this.gameSettings.setDoubleSize);
     state.table = new GameTable(SetUtils.popDoubleFromSet(this.gameSettings.gameStartDomino, state.boneyard));
     let mexicanTrain = new Train(state.table.startingDouble, Train.MEXICAN_TRAIN_ID);
+    mexicanTrain.playerName = "Viva Mexico";
     mexicanTrain.isPublic = true;
     state.table.trains.push(mexicanTrain);
 
@@ -42,42 +44,41 @@ export class GameController {
 
   @Get('getTable')
   public getMessage(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
-    let hand = this.getOrCreatePlayerHand(playerId);
+    let player = this.getSessionInfo(req);
+    let hand = this.getOrCreatePlayerHand(player);
 
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    let tableAndHand = this.bundleTableAndHand(player, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
   @Post('drawDomino')
   public drawDomino(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
-    let hand = this.getOrCreatePlayerHand(playerId);
+    let player = this.getSessionInfo(req);
+    let hand = this.getOrCreatePlayerHand(player);
 
     SetUtils.addRandomToHand(1, hand, this.currentState.boneyard);
-    this.addToLog(`${playerId} drew from the boneyard`);
+    this.addToLog(`${player.name} drew from the boneyard`);
     this.saveState();
 
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    let tableAndHand = this.bundleTableAndHand(player, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
   @Post('playPiece')
   public playPiece(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
-    let hand = this.getOrCreatePlayerHand(playerId);
-
+    let player = this.getSessionInfo(req);
+    let hand = this.getOrCreatePlayerHand(player);
 
     let move = CommonTransformer.plainToClassSingle(Move, req.body);
     let domino = Array.from(hand).find(singleDomino => singleDomino.key === move.domino.key);
     if (domino) {
       try {
         let train = this.currentState.table.trains.find(singleTrain => singleTrain.playerId === move.train.playerId);
-        if (train.playerId === playerId || train.isPublic) {
+        if (train.playerId === player.id || train.isPublic) {
           train.addDomino(domino);
           hand.delete(domino)
 
-          this.addToLog(`${playerId} played a ${domino.left}-${domino.right} on ${train.playerId}'s train`);
+          this.addToLog(`${player.name} played a ${domino.left}-${domino.right} on ${train.playerName}'s train`);
         } else {
           console.log("Train isn't players nor public");
         }
@@ -89,7 +90,7 @@ export class GameController {
     }
 
     this.saveState();
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    let tableAndHand = this.bundleTableAndHand(player, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
@@ -101,16 +102,16 @@ export class GameController {
 
   @Post('setTrainStatus')
   public setTrainStatus(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
+    let player = this.getSessionInfo(req);
     let isPublic = CommonTransformer.plainToClassSingle(Train, req.body).isPublic;
-    let localTrain = this.currentState.table.trains.find(train => train.playerId === playerId);
+    let localTrain = this.currentState.table.trains.find(train => train.playerId === player.id);
     localTrain.isPublic = isPublic;
 
-    this.addToLog(`${playerId} went ${isPublic ? 'public' : 'private'}`);
+    this.addToLog(`${player.name} went ${isPublic ? 'public' : 'private'}`);
     this.saveState();
 
-    let hand = this.getOrCreatePlayerHand(playerId);
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    let hand = this.getOrCreatePlayerHand(player);
+    let tableAndHand = this.bundleTableAndHand(player, hand);
 
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
@@ -128,7 +129,7 @@ export class GameController {
 
   @Get('getScores')
   public getScores(req: Request, res: Response): void {
-    GameScorer.score(this.gameScores, this.currentState.table.gameId, this.currentState.hands)
+    GameScorer.score(this.gameScores, this.currentState.table.gameId, this.currentState.hands, this.playerMap)
       .forEach(logMessage => this.addToLog(logMessage));
 
     this.saveState();
@@ -143,20 +144,20 @@ export class GameController {
 
   @Post('doneWithTurn')
   public doneWithTurn(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
+    let player = this.getSessionInfo(req);
 
-    this.nextPlayer(playerId, false);
+    this.nextPlayer(player, false);
 
-    let hand = this.getOrCreatePlayerHand(playerId);
-    let tableAndHand = this.bundleTableAndHand(playerId, hand);
+    let hand = this.getOrCreatePlayerHand(player);
+    let tableAndHand = this.bundleTableAndHand(player, hand);
     res.status(200).json(CommonTransformer.classToPlainSingle(tableAndHand));
   }
 
 
   @Post('forceNextTurn')
   public forceNextTurn(req: Request, res: Response): void {
-    let playerId = this.getPlayerId(req, res);
-    this.nextPlayer(playerId, true);
+    let player = this.getSessionInfo(req);
+    this.nextPlayer(player, true);
     res.status(200).json({});
   }
 
@@ -176,15 +177,41 @@ export class GameController {
     res.status(200).json(CommonTransformer.classToPlainSingle(this.gameSettings));
   }
 
+  @Post('setName/:name')
+  public setName(req: Request, res: Response): void {
+    let sessionInfo = this.getSessionInfo(req);
+    const newName = req.params.name;
+    if (!!sessionInfo.name && sessionInfo.name !== newName) {
+      this.addToLog(`${newName} doesn't want to be called ${sessionInfo.name} anymore.`);
+      this.lastUpdate = Date.now();
+    }
 
-  private nextPlayer(playerId: string, force: boolean): void {
+    sessionInfo.name = newName;
+    res.status(200).json({});
+  }
+
+  @Get('getPlayer')
+  public getName(req: Request, res: Response): void {
+    res.status(200).json(CommonTransformer.classToPlainSingle(this.getSessionInfo(req)));
+  }
+
+  private getSessionInfo(req: Request): Player {
+    if (!req.session.player)
+      req.session.player = new Player();
+
+    let player: Player = req.session.player;
+    this.playerMap.set(player.id, player);
+    return player;
+  }
+
+  private nextPlayer(player: Player, force: boolean): void {
     let currentPlayer = this.currentState.table.currentTurnPlayerId;
 
     // handle the first move of the game when anyone can make a move
     if (!currentPlayer)
-      currentPlayer = playerId;
+      currentPlayer = player.id;
 
-    if (currentPlayer !== playerId && !force)
+    if (currentPlayer !== player.id && !force)
       return;
 
     let players = this.currentState.hands.map(hand => hand.playerId);
@@ -200,10 +227,14 @@ export class GameController {
         this.currentState.table.currentTurnPlayerId = players[index + 1];
     }
 
+    let playersTurn = this.playerMap.get(this.currentState.table.currentTurnPlayerId);
+    let currentPlayersTurn = this.playerMap.get(currentPlayer);
+    let me = player.name;
+
     if (force)
-      this.addToLog(`${this.currentState.table.currentTurnPlayerId}'s turn. ${playerId} forced ${currentPlayer}'s turn to end.`);
+      this.addToLog(`${playersTurn.name}'s turn. ${me} forced ${currentPlayersTurn.name}'s turn to end.`);
     else
-      this.addToLog(`${this.currentState.table.currentTurnPlayerId}'s turn. ${playerId} just finished their turn.`);
+      this.addToLog(`${playersTurn.name}'s turn. ${me} just finished their turn.`);
 
     this.saveState();
   }
@@ -217,33 +248,29 @@ export class GameController {
     this.lastUpdate = Date.now();
   }
 
-  private getPlayerId(req: Request, res: Response): string {
-    let playerId = req.cookies.playerId;
-    if (!playerId) {
-      playerId = Buffer.from(Math.random().toString()).toString('base64');
-      res.cookie("playerId", playerId);
-    }
-
-    return Buffer.from(playerId, 'base64').toString();
-  }
-
-  private getOrCreatePlayerHand(playerId: string): Set<Domino> {
-    let hand = this.currentState.hands.find(singleHand => singleHand.playerId === playerId);
+  private getOrCreatePlayerHand(player: Player): Set<Domino> {
+    let hand = this.currentState.hands.find(singleHand => singleHand.playerId === player.id);
     if (!hand) {
-      hand = new Hand(playerId);
+      hand = new Hand(player.id);
       SetUtils.addRandomToHand(this.gameSettings.startingHandSize, hand.dominos, this.currentState.boneyard);
       this.currentState.hands.push(hand);
-      this.addToLog(`${playerId} joined game.`)
+      this.addToLog(`${player.name} joined game.`)
       this.saveState();
     }
     return hand.dominos;
   }
 
-  private bundleTableAndHand(playerId: string, hand: Set<Domino>): TableAndHand {
-    if (!this.currentState.table.trains.find(train => train.playerId === playerId)) {
-      this.currentState.table.trains.push(new Train(this.currentState.table.startingDouble, playerId));
+  private bundleTableAndHand(player: Player, hand: Set<Domino>): TableAndHand {
+    if (!this.currentState.table.trains.find(train => train.playerId === player.id)) {
+      this.currentState.table.trains.push(new Train(this.currentState.table.startingDouble, player.id));
       this.saveState();
     }
+
+    this.currentState.table.trains.forEach(singleTrain => {
+      let singlePlayer = this.playerMap.get(singleTrain.playerId);
+      if (singlePlayer)
+        singleTrain.playerName = singlePlayer.name;
+    });
 
     let tableAndHand = new TableAndHand();
     tableAndHand.hand = hand;

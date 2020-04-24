@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Domino } from '@common/model/domino';
-import { Move, TableAndHand, Train } from '@common/model/game-table';
+import { Move, TableAndHand, Train, Player } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
-import { CookieService } from '../../service/cookie.service';
 import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavTitleService } from '../../service/nav-title.service';
+import { NameService } from '../../service/name.service';
 
 @Component({
   selector: 'app-main',
@@ -19,7 +19,7 @@ export class MainComponent implements OnInit, OnDestroy {
   hand: UIDomino[] = [];
   trains: Train[];
   trainToPlay: Train;
-  playerId: string;
+  player: Player;
   playerHandCounts: Map<string, number>;
   lastUpdate: number;
   gameId: number;
@@ -31,21 +31,21 @@ export class MainComponent implements OnInit, OnDestroy {
   private dominosInBoneyard = 0;
 
   constructor(
-    private cookieService: CookieService,
     private router: Router,
     private snackBar: MatSnackBar,
+    private nameService: NameService,
     private yesNoLauncher: LauncherAreYouSure,
     private navTitleService: NavTitleService,
     private http: HttpClient) { }
 
 
-  ngOnInit(): void {
-    if (!this.cookieService.getPlayerId()) {
+  async ngOnInit(): Promise<void> {
+    this.player = await this.nameService.getPlayer();
+    if (!this.player || !this.player.name) {
       this.router.navigate(["/init"]);
       return;
     }
 
-    this.playerId = this.cookieService.getPlayerId();
     this.checkFoUpdate();
   }
 
@@ -102,7 +102,7 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!this.trains)
       return undefined;
 
-    return this.trains.find(train => train.playerId === this.playerId);
+    return this.trains.find(train => train.playerId === this.player.id);
   }
 
   private setStateFromServer(plainTableAndHand: TableAndHand): void {
@@ -139,7 +139,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {
-    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.playerId)
+    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.player.id)
       this.snackBar.open("Your Turn!", undefined, { duration: 3000, verticalPosition: "top" });
   }
 
@@ -150,8 +150,8 @@ export class MainComponent implements OnInit, OnDestroy {
       if (aIsMexican !== bIsMexican)
         return bIsMexican - aIsMexican;
 
-      let aIsMine = a.playerId === this.playerId ? 1 : 0;
-      let bIsMine = b.playerId === this.playerId ? 1 : 0;
+      let aIsMine = a.playerId === this.player.id ? 1 : 0;
+      let bIsMine = b.playerId === this.player.id ? 1 : 0;
       if (aIsMine !== bIsMine)
         return aIsMine - bIsMine;
 
@@ -201,11 +201,11 @@ export class MainComponent implements OnInit, OnDestroy {
 
   trainCanBePlayed(train: Train): boolean {
     return (!this.trainToPlay || this.trainToPlay.playerId === train.playerId)
-      && (train.isPublic || train.playerId === this.playerId);
+      && (train.isPublic || train.playerId === this.player.id);
   }
 
   toggleTrainToPlay(train: Train): void {
-    if (this.currentTurnPlayerId && this.currentTurnPlayerId !== this.playerId)
+    if (this.currentTurnPlayerId && this.currentTurnPlayerId !== this.player.id)
       return;
 
     if (this.trainToPlay)

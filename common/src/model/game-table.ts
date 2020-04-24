@@ -1,5 +1,5 @@
+import { Transform, Type } from 'class-transformer';
 import { Domino } from './domino';
-import { Type, Transform } from 'class-transformer';
 
 export class GameTable {
   @Type(() => Train)
@@ -18,7 +18,7 @@ export class GameTable {
 
 
 export class Train {
-  static readonly MEXICAN_TRAIN_ID = "Viva Mexico";
+  static readonly MEXICAN_TRAIN_ID = "mexicanTrainId";
 
   @Type(() => Domino)
   dominoes: Domino[] = [];
@@ -26,6 +26,7 @@ export class Train {
   playerId: string;
   @Type(() => Domino)
   public startingDouble: Domino
+  playerName: string;
 
   constructor(startingDouble: Domino, playerId: string) {
     this.startingDouble = startingDouble;
@@ -65,6 +66,12 @@ export class Move {
   domino: Domino;
   @Type(() => Train)
   train: Train;
+}
+
+
+export class Player {
+  id = Date.now().toString();
+  name: string;
 }
 
 

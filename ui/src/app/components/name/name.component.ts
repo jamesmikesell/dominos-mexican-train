@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CookieService } from '../../service/cookie.service';
 import { Router } from '@angular/router';
+import { NameService } from '../../service/name.service';
 
 @Component({
   selector: 'app-name',
@@ -9,27 +9,22 @@ import { Router } from '@angular/router';
 })
 export class NameComponent implements OnInit {
 
-  private _name: string;
-  hadNameAtStart: boolean;
-  get name(): string {
-    return this._name;
-  }
-  set name(val: string) {
-    this._name = val;
-    this.cookieService.setPlayerId(val);
-  }
+  name: string;
 
   constructor(
-    private cookieService: CookieService,
+    private nameService: NameService,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    this._name = this.cookieService.getPlayerId();
-    this.hadNameAtStart= !!this._name;
+  async ngOnInit(): Promise<void> {
+    let player = await this.nameService.getPlayer();
+    if (player)
+      this.name = player.name;
   }
 
-  save(): void {
+  async save(): Promise<void> {
+    await this.nameService.setName(this.name);
+
     this.router.navigate(["/init"]);
   }
 

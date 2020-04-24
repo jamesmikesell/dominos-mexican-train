@@ -1,41 +1,45 @@
-<div class="trains">
-  <ng-container *ngFor="let train of trains">
-    <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
-      [color]="getTrainColor(train)">
-      {{train.playerId}}
-      <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
-        ({{playerHandCounts.get(train.playerId)}})
-      </ng-container>
+<ng-container *ngIf="player">
+
+  <div class="trains">
+    <ng-container *ngFor="let train of trains">
+      <button [disabled]="!trainCanBePlayed(train)" (click)="toggleTrainToPlay(train)" mat-raised-button type="button"
+        [color]="getTrainColor(train)">
+        {{train.playerName}}
+        <ng-container *ngIf="playerHandCounts.get(train.playerId) != null">
+          ({{playerHandCounts.get(train.playerId)}})
+        </ng-container>
+      </button>
+
+      <app-train [train]="train" class="single-train"></app-train>
+    </ng-container>
+  </div>
+
+  <div class="hand-boundary" [class.hand-my-turn]="currentTurnPlayerId === player.id">
+    <div *ngFor="let domino of hand" class="domino" (click)="changeOrientation(domino)"
+      [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"
+      cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
+      {{domino.left}} - {{domino.right}}
+    </div>
+  </div>
+
+
+  <div class="controls">
+    <button (click)="turnFinished()" mat-raised-button type="button" color="primary"
+      [disabled]="currentTurnPlayerId && currentTurnPlayerId !== player.id">
+      Turn Finished
     </button>
-
-    <app-train [train]="train" class="single-train"></app-train>
-  </ng-container>
-</div>
-
-<div class="hand-boundary" [class.hand-my-turn]="currentTurnPlayerId === playerId">
-  <div *ngFor="let domino of hand" class="domino" (click)="changeOrientation(domino)"
-    [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"
-    cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
-    {{domino.left}} - {{domino.right}}
+    <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
+      Draw Domino
+    </button>
+    <div class="checkbox">
+      <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
+    </div>
   </div>
-</div>
 
 
-<div class="controls">
-  <button (click)="turnFinished()" mat-raised-button type="button" color="primary"
-    [disabled]="currentTurnPlayerId && currentTurnPlayerId !== playerId">
-    Turn Finished
-  </button>
-  <button (click)="drawDomino()" mat-raised-button type="button" color="warn">
-    Draw Domino
-  </button>
-  <div class="checkbox">
-    <mat-checkbox [(ngModel)]="trainIsPublic">Public Train</mat-checkbox>
+  <div class="log-container">
+    <h2 class="log-header">Log</h2>
+    <div class="log">{{log}}</div>
   </div>
-</div>
 
-
-<div class="log-container">
-  <h2 class="log-header">Log</h2>
-  <div class="log">{{log}}</div>
-</div>
+</ng-container>

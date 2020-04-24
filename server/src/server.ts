@@ -5,6 +5,8 @@ import { Logger } from '@overnightjs/logger';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import compression from 'compression';
+import session from 'express-session';
+import FileStore from 'session-file-store';
 
 export class DominoServer extends Server {
 
@@ -12,6 +14,12 @@ export class DominoServer extends Server {
 
   constructor() {
     super(true);
+    this.app.use(session({
+      secret: "doesn't matter",
+      resave: false,
+      store: new (FileStore(session))(),
+      saveUninitialized: true
+    }));
     this.app.use(compression());
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());

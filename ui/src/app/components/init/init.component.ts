@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CookieService } from '../../service/cookie.service';
+import { NameService } from '../../service/name.service';
 
 @Component({
   selector: 'app-init',
@@ -10,12 +10,13 @@ import { CookieService } from '../../service/cookie.service';
 export class InitComponent implements OnInit {
 
   constructor(
-    private cookieService: CookieService,
+    private nameService: NameService,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    if (!this.cookieService.getPlayerId())
+  async ngOnInit(): Promise<void> {
+    let player = await this.nameService.getPlayer();
+    if (!player || !player.name)
       this.router.navigate(["/name"]);
     else
       this.router.navigate(["/game"]);

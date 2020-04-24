@@ -47,6 +47,8 @@ Thumbs.db
 
 # exclude everything
 src/public/*
+sessions/*
 
 # exception to the rule
 !src/public/.gitkeep 
+!sessions/.gitkeep

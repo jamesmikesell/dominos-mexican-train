@@ -1,8 +1,8 @@
-import { Scores, Hand } from '../../../common/src/model/game-table';
+import { Scores, Hand, Player } from '../../../common/src/model/game-table';
 
 export class GameScorer {
 
-  static score(gameScores: Map<number, Scores[]>, gameId: number, hands: Hand[]): string[] {
+  static score(gameScores: Map<number, Scores[]>, gameId: number, hands: Hand[], players: Map<string, Player>): string[] {
     let roundScores: Scores[] = [];
     let playersInRound = new Set<string>();
     hands.forEach(hand => {
@@ -39,7 +39,7 @@ export class GameScorer {
     let scoreMessage: string[] = [];
     roundScores.forEach(score => {
       let combinedScore = playerCombinedScores.get(score.playerId);
-      scoreMessage.push(`${score.playerId} - ${score.score}. Combined ${combinedScore}. Overall Ranking ${scorePosition.indexOf(combinedScore) + 1}`);
+      scoreMessage.push(`${players.get(score.playerId).name} - ${score.score}. Combined ${combinedScore}. Overall Ranking ${scorePosition.indexOf(combinedScore) + 1}`);
     });
 
     return scoreMessage;
