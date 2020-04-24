@@ -34,7 +34,7 @@ export class GameScorer {
       if (playersInRound.has(playerId))
         uniqueTotalScores.add(playersScore)
     });
-    let scorePosition = Array.from(uniqueTotalScores).sort();
+    let scorePosition = Array.from(uniqueTotalScores).sort((a, b) => a - b);
 
     let scoreMessage: string[] = [];
     roundScores.forEach(score => {

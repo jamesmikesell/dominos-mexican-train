@@ -1,6 +1,5 @@
 
 # TODO 
-* ranking bug
 * websockets instead of polling
 * warn on boneyard depletion?
 
@@ -25,3 +24,4 @@
 * name login cookie bug
 * show player turn in train
 * vibrate on turn
+* ranking bug
