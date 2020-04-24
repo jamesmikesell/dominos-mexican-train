@@ -139,8 +139,10 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {
-    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.player.id)
+    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.player.id) {
       this.snackBar.open("Your Turn!", undefined, { duration: 3000, verticalPosition: "top" });
+      navigator.vibrate(100);
+    }
   }
 
   private sortTrains(trains: Train[]): void {
