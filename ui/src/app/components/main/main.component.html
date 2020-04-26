@@ -1,4 +1,4 @@
-<div *ngIf="player" (click)="resetWarningDelay()">
+<div *ngIf="player" (click)="resetWarningDelay(true)">
 
   <div class="trains">
     <ng-container *ngFor="let train of trains">
@@ -20,7 +20,7 @@
   <div class="hand-boundary" [class.hand-my-turn]="currentTurnPlayerId === player.id">
     <div *ngFor="let domino of hand" class="domino" (click)="changeOrientation(domino)"
       [class.domino-regular]="!domino.isDouble" [class.domino-double]="domino.isDouble" [class.hidden]="domino.hidden"
-      cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino)" (cdkDragEnded)="dragEnd(domino)">
+      cdkDragBoundary=".hand-boundary" cdkDrag (cdkDragStarted)="dragStart(domino, true)" (cdkDragEnded)="dragEnd(domino)">
       {{domino.left}} - {{domino.right}}
     </div>
   </div>

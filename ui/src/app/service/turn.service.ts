@@ -15,6 +15,7 @@ export class TurnService {
   private player: Player;
   private reminderSub: Subscription;
   private lastResetTime = new Date();
+  private sound: HTMLAudioElement;
 
   constructor(private snackBar: MatSnackBar,
     nameService: NameService
@@ -27,7 +28,7 @@ export class TurnService {
 
   private async warnItsYourTurn(isRewarn?: boolean): Promise<void> {
     this.snackBar.open("Your Turn!", undefined, { duration: 3000, verticalPosition: "top" });
-    navigator.vibrate(100);
+    this.vibrateOrBeep(100);
 
     if (isRewarn) {
       await this.rewarn(1000, 500);
@@ -35,6 +36,11 @@ export class TurnService {
       await this.rewarn(1000, 500);
       await this.rewarn(1000, 1000);
     }
+  }
+
+  private vibrateOrBeep(time: number): void {
+    if (!navigator.vibrate || !navigator.vibrate(time))
+      this.beep();
   }
 
   private shouldRewarn(): boolean {
@@ -51,7 +57,7 @@ export class TurnService {
     //if user just touched phone, stop nagging them
     if (!this.shouldRewarn())
       return;
-    navigator.vibrate(vibration);
+    this.vibrateOrBeep(vibration);
   }
 
   private sleep(timeMs: number): Promise<void> {
@@ -72,9 +78,14 @@ export class TurnService {
     }
   }
 
-  resetWarningTimer(): void {
+  resetWarningTimer(fromUserAction = false): void {
     if (this.reminderSub && !this.reminderSub.closed)
       this.reminderSub.unsubscribe();
+
+    if (!this.sound && fromUserAction) {
+      this.sound = new Audio();
+      this.sound.play();
+    }
 
     if (this.turnsPlayerId === this.player.id) {
       this.lastResetTime = new Date();
@@ -83,5 +94,11 @@ export class TurnService {
     }
   }
 
+  private beep(): void {
+    if (this.sound) {
+      this.sound.src = "/assets/timer_beep.mp3";
+      this.sound.play();
+    }
+  }
 
 }

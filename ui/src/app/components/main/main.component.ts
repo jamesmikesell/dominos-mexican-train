@@ -220,9 +220,9 @@ export class MainComponent implements OnInit, OnDestroy {
       });
   }
 
-  dragStart(domino: UIDomino): void {
+  dragStart(domino: UIDomino, fromUi = false): void {
     domino.dragging = true;
-    this.resetWarningDelay();
+    this.resetWarningDelay(fromUi);
   }
 
   dragEnd(domino: UIDomino): void {
@@ -251,8 +251,8 @@ export class MainComponent implements OnInit, OnDestroy {
       });
   }
 
-  resetWarningDelay(): void {
-    this.turnService.resetWarningTimer();
+  resetWarningDelay(fromUserAction = false): void {
+    this.turnService.resetWarningTimer(fromUserAction);
   }
 
 }
