@@ -25,9 +25,11 @@ export class TrainComponent implements OnInit, AfterViewChecked {
   private scrollToBottom(): void {
     try {
       if (!this.prevScrollWidth || Math.abs(this.prevScrollWidth - this.trainContainer.nativeElement.scrollWidth) > 3) {
-        let width = this.trainContainer.nativeElement.scrollWidth;
-        this.trainContainer.nativeElement.scrollLeft = width;
-        this.prevScrollWidth = width;
+        setTimeout(() => {
+          let width = this.trainContainer.nativeElement.scrollWidth;
+          this.trainContainer.nativeElement.scrollLeft = width;
+          this.prevScrollWidth = width;
+        }, 100);
       }
     } catch (err) {
       console.error(err);
