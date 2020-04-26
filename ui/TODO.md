@@ -25,3 +25,4 @@
 * show player turn in train
 * vibrate on turn
 * ranking bug
+* nag on it's your turn

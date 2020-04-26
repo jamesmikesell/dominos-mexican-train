@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Domino } from '@common/model/domino';
-import { Move, TableAndHand, Train, Player } from '@common/model/game-table';
+import { Move, Player, TableAndHand, Train } from '@common/model/game-table';
 import { CommonTransformer } from '@common/util/conversion-utils';
-import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { NavTitleService } from '../../service/nav-title.service';
 import { NameService } from '../../service/name.service';
+import { NavTitleService } from '../../service/nav-title.service';
+import { TurnService } from '../../service/turn.service';
+import { LauncherAreYouSure } from '../dialog-are-you-sure/dialog-are-you-sure.component';
 
 @Component({
   selector: 'app-main',
@@ -32,10 +32,10 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar,
     private nameService: NameService,
     private yesNoLauncher: LauncherAreYouSure,
     private navTitleService: NavTitleService,
+    private turnService: TurnService,
     private http: HttpClient) { }
 
 
@@ -112,9 +112,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.playerHandCounts = tableAndHand.dominosInPlayerHands;
     this.lastUpdate = tableAndHand.lastUpdate;
     this.dominosInBoneyard = tableAndHand.dominosInBoneyard;
-    let prevPlayersTurn = this.currentTurnPlayerId;
     this.currentTurnPlayerId = tableAndHand.table.currentTurnPlayerId;
-    this.warnItsYourTurn(prevPlayersTurn, tableAndHand.table.currentTurnPlayerId);
+    this.turnService.setTurn(tableAndHand.table.currentTurnPlayerId);
     this.log = tableAndHand.table.playLog.reverse().join("\n");
     this.sortTrains(this.trains);
     if (this.gameId !== tableAndHand.table.gameId) {
@@ -136,13 +135,6 @@ export class MainComponent implements OnInit, OnDestroy {
       this.navTitleService.line1 = undefined;
 
     this.navTitleService.line2 = `Boneyard - ${this.dominosInBoneyard} dominos remaining`;
-  }
-
-  private warnItsYourTurn(prevPlayersTurn: string, currentPlayer: string): void {
-    if (currentPlayer !== prevPlayersTurn && currentPlayer === this.player.id) {
-      this.snackBar.open("Your Turn!", undefined, { duration: 3000, verticalPosition: "top" });
-      navigator.vibrate(100);
-    }
   }
 
   private sortTrains(trains: Train[]): void {
@@ -230,6 +222,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   dragStart(domino: UIDomino): void {
     domino.dragging = true;
+    this.resetWarningDelay();
   }
 
   dragEnd(domino: UIDomino): void {
@@ -258,6 +251,9 @@ export class MainComponent implements OnInit, OnDestroy {
       });
   }
 
+  resetWarningDelay(): void {
+    this.turnService.resetWarningTimer();
+  }
 
 }
 

@@ -1,4 +1,4 @@
-<ng-container *ngIf="player">
+<div *ngIf="player" (click)="resetWarningDelay()">
 
   <div class="trains">
     <ng-container *ngFor="let train of trains">
@@ -45,4 +45,4 @@
     <div class="log">{{log}}</div>
   </div>
 
-</ng-container>
+</div>

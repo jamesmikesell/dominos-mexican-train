@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonTransformer } from '../../../../../common/src/util/conversion-utils';
 import { GameSettings } from '../../../../../common/src/model/game-table';
 import { NavTitleService } from '../../service/nav-title.service';
+import { TurnService } from '../../service/turn.service';
 
 @Component({
   selector: 'app-admin',
@@ -15,6 +16,7 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
+    public turnService: TurnService,
     private navTitleService: NavTitleService
   ) { }
 
